@@ -5,7 +5,7 @@ I've uploaded C/C++ code to generate ASCII characters for vector drawing devices
 
 The main advantage of a vector-based character generator is that, unlike with bitmap character generators, the output is infinitely scaleable and can be rotated and plotted in arbitrary orientations or with arbitrary distortions with **no aliasing**. Useful to drive engravers (laser or wood), etc.
 
-Characters are defined on an 8x8 (X, Y) matrix as lines or strokes between endpoints, and were originally optimized for efficiency and plotting speed, for hard copy production using simple move/draw pen plotters.  
+Characters are defined on an 8x8 (X, Y) matrix as lines (strokes) between endpoints, and were originally optimized for efficiency and plotting speed, for production of hard copy using simple move/draw pen plotters. **NOTE:** due to program design, character coordinate **X = 0** has special significance and cannot be used to form part of the character, so that column could be considered as part of character to character spacing.
 
 Some guides for Calcomp vector routines can be found here: http://www.urbanjost.altervista.org/LIBRARY/libcalcomp/index.html
 
@@ -24,5 +24,3 @@ I included the original Fortran77 code (plotsub.f), which is in the public domai
 3. calcomp6.ino is the above refactored code, but with general purpose text output (moveto/drawto commands) for the graphics, to be used as input to other devices.
 
 The file Calcomp_ID_IT.txt is a complete list of all the characters and symbols encoded by calcomp5.ino and calcomp6.ino, including the individual move/draw vector outputs representing each character.
-
-**NOTE:** due to program design, **X == 0** has special significance and cannot be used to form part of the character.
