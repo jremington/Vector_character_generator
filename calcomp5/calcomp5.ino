@@ -37,7 +37,7 @@
 //      20  64  4    7  71 41 111  I    6 137 62 136  ^    5 169
 //      21  65  5    9  75 43 112  J    5 140 63 137  <-   5 172
 //
-//      64 140       1 174  (back tic, empty)
+//      64 140  `    2 284  (back tic)
 //      65 141  a    9 175 74 152  j    6 216 83 163  s    10 255
 //      66 142  b    9 180 75 153  k    7 219 84 164  t     7 260
 //      67 143  //   8 185 76 154  l    5 223 85 165  u     7 264
@@ -48,8 +48,6 @@
 //      72 150  h    8 209 81 161  q   12 246 90 172  z     4 282
 //      73 151  i    6 213 82 162  r    6 252
 //
-//      NOTE: char #64 empty. Stroke table indexing was changed at some point
-//      to allow more that 255 entries, breaking at char #83, SJR 6/23/2022.
 //  ID array reindexed 6/24/2022, fixed char #63 
 
 const uint16_t ID[] PROGMEM = {
