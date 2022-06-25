@@ -1,0 +1,1826 @@
+C *   *  *  *   PLOTTING SUBROUTINES *  *  *  *  *
+C
+C            THIS SUBROUTINE LIBRARY IS IN THE PUBLIC DOMAIN.
+C  
+      SUBROUTINE INITAL(IU,IS,IW,IT,IR,IZ)
+C
+C            THIS SUBROUTINE MUST BE CALLED BEFORE ANY OTHER  OF
+C       THE  PLOT SUBROUTINES.  IT MUST BE CALLED ONLY ONCE IN A
+C       PROGRAM NO MATTER HOW MANY PLOTS ARE MADE.  USE RSTR  TO
+C       TRANSITION  BETWEEN PLOTS AND AT THE END OF THE PLOTTING
+C       SESSION.
+C
+C            THE PEN IS POSITIONED  AGAINST  THE  LOWER  Y  AXIS
+C       LIMIT  SWITCH  AND THAT POINT IS DEFINED AS (0,0) UNLESS
+C       GRIDDED  PAPER  IS  SELECTED.   THEN  THE  PEN  AND  THE
+C       LOCATION  OF  (0,0)  ARE  .5  INCHES  FROM  THE -Y LIMIT
+C       SWITCH.  IT IS ASSUMED THAT THE PEN  WAS  POSITIONED  BY
+C       THE  OPERATOR  TO  LIE  ON  ONE OF THE FOLD LINES OF THE
+C       PAPER.
+C
+C       THE ARGUMENTS HAVE THE FOLLOWING FUNCTION:
+C
+C               IU =    LOGICAL UNIT NUMBER (YOUR TERMINAL)
+C               IS =    PLOTTER RESOLUTION IN INCREMENTS/INCH
+C               IW =    PLOTTER WIDTH IN INCHES
+C               IT =    PAPER TYPE (0 = GRIDDED, 1 = PLAIN)
+C               IR =    PEN CONFIGURATION 0 = 1 PEN, 1 = 3 PEN,
+C                        (DP-7), 2 = 3 PEN (DP-8),  IR < 0 =
+C                        MULTIPLE PEN WITH .75" SPACING.
+C               IZ =    DATA COMMUNICATIONS PROTOCOL:
+C                       0 = ONLINE -- PTC5-1 -- PTC5-3
+C                       1 = RESERVED
+C                       2 = OFFLINE -- ASR WITH PAPER TAPE OR CASSETTE
+C                       5 = BATCH TERMINAL -- NOT SUPPORTED
+      COMMON /RZXMBI/ KU, ICIRCL, ST, SS, WP, IGENSY
+
+      SAVE
+C
+C                               INITIALIZE BUFFER AND PROTOCOL
+C
+      CALL IMGOPN
+      CALL MOVER (29000, IU, IS, IZ, 0, 0, 0)
+      WP=-.75
+      IF (IR-1)30,20,10
+C
+C                               PLOTTER HAS WIDE PEN SPACING
+C
+   10 WP = -1.0
+C
+C                               SET FOR PEN # 1
+C
+   20 CALL MOVER (29999, 1, 0, 0, 0, 0, 0)
+C
+C                               SET RESOLUTION IN INCREMENTS/.01 INCH
+C                               FOR USE BY PLOT, SYMBOL, CIRCLE
+C
+   30 ST = FLOAT(IS) * 0.01
+      SS = ST
+C
+C                               RAISE PEN
+C
+      KU = 1
+      CALL MOVER (-27000, -27000, -27000, -27000, 0, 0, 0)
+C
+C                               INITIALIZE PLOT WITH PLOTTER WIDTH &
+C                               PAPER TYPE OFFSET AND MOVE PEN TO
+C                               THE STARTING POSITION.
+C
+      CALL PLOT (FLOAT(IW), -0.5 * FLOAT(IT) + 0.5, 5)
+C       *  *    FOR DP-101   * *
+C EXECUTE THE FOLLOWING COMMAND TO DRIVE PEN TO LOWER LEFT HAND CORNER
+C     CALL PLOT(-15.,0.,-3)
+      RETURN
+      END
+	SUBROUTINE PLOTS
+C	THIS SUBROUTINE CALLS INITIAL WITH THE FOLLOWING DEFAULT PARAMETERS
+C	
+C	LOGICAL UNIT NUMBER = 6
+C	PLOTTER RESOLUTION = 250 INCREMENTS PER INCH
+C	PLOTTER WIDTH = 36 INCHES
+C	PAPER TYPE = PLAIN
+C	PEN CONFIGURATION = 3 (DP-8)
+C	DATA COMMUNICATION PROTOCOL = ONLINE
+C
+	CALL INITAL (6,250,36,1,2,0)
+	RETURN
+	END
+	SUBROUTINE GENSYMB
+C
+C	TURN ON HARDWARE CHARACTER GENERATOR
+C
+	COMMON /RZXMBI/ KU, ICIRCL, ST, SS, WP, IGENSY
+	DATA IGENSY /0/
+
+	SAVE
+C
+	IGENSY = 1
+	RETURN
+	END
+      SUBROUTINE AXIS (X,Y,LBL,NC,S,THETB,SMIN,DS,NN)
+C
+C            THIS SUBROUTINE DRAWS AN AXIS WITH "TIC"  MARKS  AT
+C       ONE INCH INTERVALS WITH THEIR ASSOCIATED VALUES AND ADDS
+C       A LABEL.
+C
+C       THE ARGUMENTS ARE:
+C
+C         X,Y   THE  COORDINATES IN INCHES OF THE STARTING POINT
+C               OF THE AXIS.
+C
+C         LBL   A  HOLERITH STRING THAT WILL BE USED AS THE AXIS
+C               LABEL.  IT  IS  CENTERED  AND DRAWN IN 0.14 INCH
+C               HIGH LETTERS.
+C
+C         S     THE LENGTH OF THE AXIS IN INCHES.
+C
+C         THETB THE  ANGLE IN DEGREES FROM THE +X DIRECTION THAT
+C               THE AXIS IS DRAWN.  =0 IMPLIES A HORIZONTAL AXIS
+C               READING  LEFT  TO RIGHT.  =90 IMPLIES A VERTICAL
+C               AXIS READING BOTTOM TO TOP.
+C
+C         SMIN  THE MINIMUM VALUE SHOWN ON THE AXIS.
+C
+C         DS    THE SCALE INCREMENT PER INCH ON THE SCALE.
+C
+C         NN    SPECIFIES THE NUMBER OF DIGITS AFTER THE DECIMAL
+C               POINT ON NUMERIC LETTERING.
+C
+C
+      DIMENSION LBL(1)
+
+      SAVE
+
+      XB = X
+      YB = Y
+      YMIN = SMIN
+      N = S + .5
+      NAC = IABS(NC)
+      YYD = .5 * S - .06 * NAC
+      JSV = 11667
+      KSV = THETB + SIGN(.5, THETB)
+      CALL QXDRAW (JSV, KSV, 1)
+      F = .0001 * JSV
+      G = .0001 * KSV
+      SGN = ISIGN(1, NC)
+      FSV = SGN * F
+      GSV = SGN * G
+      T = -.07 * (SGN - 1.)
+      SHFTX = T * GSV
+      SHFTY = T * FSV
+      XA = XB - .1 * GSV
+      YA = YB + .1 * FSV
+      XC = XB - .15 * GSV - .17 * F - SHFTX
+      YC = YB + .15 * FSV - .17 * G + SHFTY
+      XD = XB + YYD * F - .33 * GSV - SHFTX
+      YD = YB + YYD * G + .33 * FSV + SHFTY
+      CALL NUMBER (XC, YC, .14, YMIN, THETB, NN)
+C                               DRAW AXIS SEGMENTS & NUMBER THEM
+      DO 10 I = 1, N
+      CALL PLOT (XA, YA, 1)
+      CALL PLOT (XB, YB, 2)
+      XA = XA + F
+      XB = XB + F
+      XC = XC + F
+      YA = YA + G
+      YB = YB + G
+      YC = YC + G
+      YMIN = YMIN + DS
+      CALL PLOT (XB, YB, 1)
+      CALL PLOT (XA, YA, 1)
+   10 CALL NUMBER (XC, YC, .14, YMIN, THETB, NN)
+C                               ADD THE AXIS LABEL
+      CALL SYMBOL (XD, YD, .14, LBL, THETB, NAC)
+      RETURN
+      END
+      SUBROUTINE CIRCLE (XORG, YORG, RAD)
+C
+C       THIS  SUBROUTINE GENERATES CIRCLES USING THE HARDWARE OR
+C       SOFTWARE AS APPROPRIATE.
+C
+      COMMON /RZXMBI/ KU, ICIRCL, ST, SS, WP, IGENSY
+      DATA ICIR /65/, IC /80/
+
+      SAVE
+C
+	IF (IGENSY.NE.1) GOTO 80
+      IF (ICIRCL)        10, 10, 80
+C                       HARDWARE CIRCLE GENERATOR AVAILABLE
+   10 DIAM = RAD * 2.
+      CALL WHERE (XX, YY, FACT)
+      CALL PLOT (XORG, YORG, 3)
+      XMIN = 1. / SS
+      IF ((DIAM * FACT) - XMIN)        70, 45, 20
+   20 IC = 80
+   30 ID = XMIN * 1000. + .5
+      ADIA = DIAM * FACT
+      IAD = ADIA * 1000. + .5
+      IREM = MOD(IAD, ID)
+      IAREM = ID - IREM
+      IF (IREM .LE. 10 .OR. IAREM .LE. 10)        GO TO 40
+      GO TO 80
+   40 ICHAR = IAD / ID
+      IF (IREM .LE. 10)        ICHAR = ICHAR - 1
+      GO TO 60
+   45 IC=80
+   50 ICHAR = 0
+   60 IR = ICHAR + 64
+      IF (IR .GE. 93)        GO TO 80
+      CALL MOVER (1, IR, ICIR, 1, IC, 1, -1)
+      RETURN
+   70 IC = 79
+      XMIN = .1 / SS
+      IF ((DIAM * FACT) - XMIN)        80, 50, 30
+C                               USE THE SOFTWARE GENERATOR
+   80 CALL CIRCL1 (XORG, YORG, RAD)
+      RETURN
+      END
+C
+      SUBROUTINE CIRCL1 (A, B, RR)
+C
+C       THIS  SUBROUTINE  GENERATES  CIRCLES  WHEN  THE HARDWARE
+C       CIRCLE GENERATOR IS NOT AVAILABLE
+C
+      CALL WHERE (X, Y, CFAC)
+   10 THETA = 0.
+      THETB = 360. * .017453292
+      CALL PLOT (A + RR * COS(THETA), B + RR * SIN(THETA), 3)
+      CALL PENDN
+      STEP = (.0314 / RR) / CFAC
+   20 CONTINUE
+      CALL PLOT (A + RR * COS(THETA), B + RR * SIN(THETA), 1)
+      THETA = THETA + STEP
+      IF (THETA - THETB)        20, 30, 30
+   30 CALL PLOT (A + RR * COS(THETB), B + RR * SIN(THETB), 1)
+      CALL PLOT(A, B, 3)
+      RETURN
+      END
+C
+      SUBROUTINE QXDRAW (I,J,K)
+C
+C       THIS SUBROUTINE IS CALLED BY SYMB1 AND NUMBER TO
+C       GENERATE THE STROKES NECESSARY TO GENERATE CHARACTERS.
+C
+C
+      LOGICAL KUP
+      DATA KUP/.TRUE./
+
+C      SAVE KUP, XOO,YOO, SNJ,CSJ, CSV,SSV, ASV,BSV
+      SAVE
+C
+C       DISPATCH ACCORDING TO FUNCTION:
+C
+C               K = 1   INITIALIZE
+C               K = 2   MAKE A CHARACTER STROKE
+C               K = 3   INDEX PEN TO NEXT CHAR & REST SIZ
+C               K = 4   REDUCE CHAR SIZE FOR LOWER CASE
+C               K = 5   SET INITIAL PEN POSITION
+C
+C
+      GO TO (10,40,70,80,30), K
+C
+C               K = 1:  INITIALIZE WITH I = HEIGHT, J = ANGLE
+C                       RETURN CHAR WIDTH DELTA (X,Y)*1000
+C
+   10 SCL = I / 7.
+      T = .017453294 * J
+      CSJ = COS (T)
+      SNJ = SIN (T)
+      ISV = .857143 * I * CSJ + SIGN (.5, CSJ)
+      JSV = .857143 * I * SNJ + SIGN (.5, SNJ)
+      I = ISV
+      J = JSV
+      CSV = SCL * CSJ
+      SSV = SCL * SNJ
+      ASV = ISV * .01
+      BSV = JSV * .01
+   20 CSJ = CSV
+      SNJ = SSV
+      RETURN
+C
+C               K = 5:  SET INITIAL PEN POSITION
+C
+   30 XOO = .0025 * I
+      YOO = .0025 * J
+      RETURN
+C
+C               K = 2:   MAKE A CHARACTER STROKE
+C
+   40 IF (J .LT. 8)        GO TO 50
+      CALL PENUP
+      KUP = .TRUE.
+      J = J - 8
+   50 XN = (I * CSJ - J * SNJ) * .01 + XOO
+      YN = (I * SNJ + J * CSJ) * .01 + YOO
+   60 CALL PLOT (XN, YN, 1)
+      IF (K .GT. 2)        GO TO 20
+      IF (KUP)        CALL PENDN
+      KUP = .FALSE.
+      RETURN
+C
+C               K = 3:  INDEX PEN TO NEXT CHAR & REST SIZE
+C
+   70 XN = XOO + ASV
+      XOO = XN
+      YOO = YOO + BSV
+      YN = YOO
+      CALL PENUP
+      KUP = .TRUE.
+      GO TO 60
+C
+C               K = 4:  REDUCE CHAR SIZE FOR LOWER CASE
+C
+   80 CSJ = .8 * CSJ
+      SNJ = .8 * SNJ
+      RETURN
+      END
+      SUBROUTINE FACTOR (FAC)
+C
+C            THIS SUBROUTINE CAUSES ALL PLOTTING  AFTER  IT  HAS
+C       BEEN  CALLED  TO  BE  SCALED BY THE VALUE GIVEN FAC.  IT
+C       SETS AN ABSOLUTE NOT  A  RELATIVE  VALUE.   THE  INITIAL
+C       VALUE OF FAC IS 1.0.
+C
+      CALL PLOT (FAC, -1., 7)
+      RETURN
+      END
+      SUBROUTINE GRAIN (IG)
+C
+C            THIS SUBROUTINE SETS THE  EFFECTIVE  RESOLUTION  OF
+C       THE  PLOTTER  SO THAT THE DRAWING OF CURVED LINES CAN BE
+C       SPEEDED UP BY REDUCING THE NUMBER  OF  CALCULATIONS  AND
+C       SEGMENTS USED TO DRAW THEM.  THE EFFECTIVE RESOLUTION IS
+C       MODIFIED BY DIVIDING THE ACTUAL RESOLUTION BY IG.   THUS
+C       FOR  A  PLOTTER  WITH 200 STEPS PER INCH, IF IG = 2, THE
+C       PLOTTER WOULD BEHAVE AS THOUGH IT HAD  A  RESOLUTION  OF
+C       100   STEP   PER  INCH.   PLOT,  CIRCLE,  &  SYMBOL  ARE
+C       AFFTECTED.
+C
+      COMMON /RZXMBI/ KU, ICIRCL, ST, SS, WP, IGENSY
+      IF(ICIRCL.NE.-1)RETURN
+      CALL PLOT (-1., 1. / IG, 10)
+      CALL MOVER (29998, IG, IG, IG, 0, 0, 0)
+C
+C                       CHANGE EFFECTIVE RESOLUTION OF CIRCLE
+C                       GENERATOR AND SYMBOL.
+C
+      SS = ST /FLOAT(IG)
+      RETURN
+      END
+      SUBROUTINE LINE (X, Y, N, KODE, ISPACE)
+C
+C            THIS SUBROUTINE PLOTS  POINT-TO-POINT  THE  NUMBERS
+C       CONTAINED IN THE DATA ARRAYS.  THE ARGUMENTS ARE:
+C
+C         X     THE ARRAY OF X COORDINATES TO BE PLOTTED.
+C
+C         Y     THE ARRAY OF Y COORDINATES TO BE PLOTTED AGAINST
+C               THE CORRESPONDING ELEMENTS IN X.
+C
+C         KODE  THE EVENT MARKER TO BE PLACED AT THE COORDINATES
+C               SPECIFIED  BY  (X, Y).   IT  CAN  BE  ANY  RIGHT
+C               JUSTIFIED  CHARACTER.  IF  IT  IS  NEGATIVE,  NO
+C               CONNECTING LINES ARE PLACED BETWEEN THE SYMBOLS.
+C               THE SPECIAL DIFFER BETWEEN THE PTC5-1 AND PTC5-3
+C               THE CHARACTERS GENERATED ARE LISTED IN MARKER.
+C
+C         ISPACE THE INTERVALS AT WHICH THE SYMBOLS SPECIFIED BY
+C               KODE ARE DRAWN. IF IT = 2, EVERY OTHER POINT HAS
+C               A  SYMBOL.  IF IT = 5, POINTS 1, 5, 10, ETC HAVE
+C               SYMBOLS.
+C
+C
+      DIMENSION X(N), Y(N)
+C                       SETUP SYMBOLS AND LINE TYPE
+      CALL PENUP
+      I = KODE
+      IF (KODE .LT. 0)        I = -I
+C                       DRAW THE SEGMENTS AND SYMBOLS
+      DO 10 J = 1, N, ISPACE
+      CALL PLOT (X(J), Y(J), 1)
+      IF (KODE .NE. 0)        CALL MARKER (I)
+      IF (KODE .GE. 0)        CALL PENDN
+   10 CONTINUE
+C                       LEAVE THE PEN UP
+      CALL PENUP
+      RETURN
+      END
+      SUBROUTINE MARKER (I)
+C
+C            THIS  ROUTINE  DRAWS  A  MARKER  CHARACTER  AT  THE
+C       PRESENT  PEN  POSITION.   I  CAN  BE ANY RIGHT JUSTIFIED
+C       CHARACTER.  IF I = 2H  Z,  THE  A  "Z"  WILL  BE  DRAWN.
+C       SPECIAL CHARACTERS ARE DRAWN FOR I=:
+C
+C        I=1    "+"
+C        I=2    "*"
+C        I=3    "#"
+C        I=4    "@"
+C        I=5    ">"
+C
+C            THE PTC5-3 WILL ALSO PLOT THE 14 CALCOMP CHARACTERS
+C       PLUS  AN  ARROWHEAD (USED FOR DRAFTING) AND CIRCLES WITH
+C       MIN SIZES OF  10  INCREMENTS  AND  100  INCREMENTS  (SEE
+C       SUBROUTINE CIRCLE).
+C
+C
+      COMMON /RZXMBI/ KU, ICIRCL, SS, ST, WP, IGENSY
+      DIMENSION MARK(14)
+      DIMENSION MRK(5), IS(1)
+      BYTE IS
+      DATA MRK/ 43, 42, 35, 64, 62/
+      DATA MARK/ 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75,
+     1 76, 77/
+
+      SAVE 
+
+      IF (I .GT. 5) GO TO 10          !  PASS ALL UNRECOGNIZED CHARACTERS
+				      !  THROUGH TO SOFTWARE GENERATOR
+
+      IF (ICIRCL .GT. 0)                                IS(1) = MRK(I)
+      IF (ICIRCL .LT. 0)                                IS(1) = MARK(I)
+	IF (IGENSY.NE.1) 		IS(1) = MRK(I)
+      ANGSIZ = 3600.
+      GO TO 20
+   10 IS(1) = I
+      ANGSIZ = 0.
+   20 CONTINUE
+      JJ = 4
+      CALL PLOT (X, Y, JJ)
+      CALL SYMBOL (X, Y, .14, IS, ANGSIZ, -1)
+      CALL PLOT (X, Y, 1)
+      RETURN
+      END
+      SUBROUTINE MOVER(IOX,IHT,ITH,NSUB,LBL,NCHAR,IENT)
+C
+C *** KU INDICATES LAST CALLED PEN CONDITION
+C *** ICIRCL INDICATES THE SIZE OF MEMORY BOARD
+C *** ICIRCL=1 -- PTC5-1 ; ICIRCL=-1 -- PTC5-3
+C *** MOVER STORES LAST VECTOR DIRECTION AND COMPARES IT TO NEW
+C *** VECTOR, AND OUTPUTS OLD VECTOR IF NOT SAME
+C ***   IVEC=-1 NO PREVIOUS VECTOR
+C ***   IVEC=0 OR 1 PREVIOUS VECTOR TO COMPARE OR OUTPUT
+C *** LABEL INDICATES WHERE TO RETURN AFTER OUTPUTTING PREVIOUS VECTOR
+C *** SUBROUTINE MOVR= CHARACTER GENERATOR MODE WHERE
+C ***   IOX= SWITCH TO INDICATE WHETHER TO END CHARACTER STRING
+C ***   WITH AN UNDERSCORE  IE., CALL FROM NUMBER
+C ***   IHT= HT OF CHARACTER STRING
+C ***   ITH= ANGLE OF CHARACTER STRING
+C ***   NSUB= NUMBER OF WORDS OF CHARACTER STRING
+C ***   LBL= ACTUAL CHARACTER STRING TO BE PLOTTED
+C ***   NCHAR= NUMBER OF CHARACTERS IN LBL STRING
+C
+      COMMON /RZXMBI/ KU, ICIRCL, SS, ST, WP, IGENSY
+
+      DIMENSION LBL(1)
+      DIMENSION ICAR(2)
+      DIMENSION IO(96,5),IOP(480)
+      BYTE LBL, IO, IOP
+      EQUIVALENCE (IO(1,1),IOP(1))
+      DATA IPD/62/,IPUP/94/
+      DATA ISCOL/59/,ICOL/58/
+      DATA IG/1/,IGAIN/-1/
+      DATA INCR/28/,IRC/63/
+      DATA ISTOP/95/
+      DATA KKL/1/,IVEC/-1/,ICK/-1/
+      DATA IXOFF/23/,IFIL/-1/
+      DATA LTST/96/,ILMEM/480/,IRD/1/
+      DATA IO/480*127/
+      DATA M/1/,N/1/
+      DATA IDES/-1/
+      DATA IBLNK/32/
+      DATA ISHFT/256/,I0,I1,I3/1H0,1H1,1H3/
+
+      SAVE
+
+      IF (IENT .EQ. 0)  GO TO 20
+      IF(IVEC-1)850,10,10
+   10 ASSIGN 850 TO LABEL
+      IVEC=-1
+      GO TO 350
+C
+C *** ENTRY MOVER= VECTOR GENERATOR WHERE
+C ***   IOX,IOY= OLD X AND Y COORDINATES IN INCREMENTS
+C ***   INX,INY= NEW X AND Y COORDINATES IN INCREMENRTS
+C *** KKL= SWITCH TO INDICATE THAT SYMBOL STRING NOT TERMINATED
+C *** BY AN UNDERSCORE YET
+C ***   KKL=-1 STRING NOT TERMINATED
+C ***   KKL=1  STRING COMPLETE
+C *** IOX=28000 DUMP BUFFER CALLED FROM RSTR
+C *** IOX=29000 INITIALIZATION OF LOGICAL UNIT DEVICE UNUSED
+C *** ON CERTAIN COMPUTERS
+C *** IOX=29999 NEWPN INDICATOR
+C *** IOX=29998 GRAIN FUNCTION
+C *** INX=27000 PEN DOWN
+C *** INX=-27000 PEN UP
+C
+   20 IOY = IHT
+      INX = ITH
+      INY = NSUB
+      ASSIGN 280 TO LABEL
+      IRE = -1
+      IXCODE=0
+      IYCODE=0
+      IF(KKL)960,30,30
+   30 CONTINUE
+      IF(IABS(IOX)-27000)260,50,40
+   40 ASSIGN 780 TO JUMP
+      ASSIGN 280 TO LABEL
+      IF(IABS(IOX).EQ.28000)        GO TO 650
+      IF (IOX.EQ.29000)    GO TO 790
+      IF(IOX.EQ.29999)GO TO 80
+      IF(IOX.EQ.29998)GO TO 230
+   50 IF(INX-27000)60,70,60
+   60 IF(INX+27000)280,160,280
+   70 GO TO(280,130),KU
+C
+C                               CHANGE TO A NEW PEN
+C
+   80 ASSIGN 780 TO JUMP
+      ASSIGN 280 TO LABEL
+      IF(IVEC-1)100,90,90
+   90 ASSIGN 100 TO LABEL
+      IVEC=-1
+      GO TO 350
+  100 IXCODE=93
+      IF (48 + IOY .GT. 128) THEN
+         WRITE (*,*) 'Invalid pen number: Maximum is 80'
+         STOP 'ERROR'
+         ENDIF
+      IYCODE=48 + IOY
+      IF(M-(LTST-1))120,120,110
+  110 ASSIGN 120 TO LABEL
+      ASSIGN 120 TO JUMP
+      GO TO 670
+  120 IO(M,N)=IXCODE
+      IO(M+1,N)=IYCODE
+      M=M+2
+      RETURN
+C *** PEN DOWN ***************************************************
+  130 IPEN=IPD
+      IF(IVEC-1)140,150,150
+  140 KU=1
+      GO TO 200
+  150 ASSIGN 140 TO LABEL
+      IVEC=-1
+      GO TO 350
+C *** PEN UP ******************************************************
+  160 GO TO (170,280),KU
+  170 IPEN=IPUP
+      IF(IVEC-1)        180,190,190
+  180 KU=2
+      GO TO 200
+  190 ASSIGN 180 TO LABEL
+      IVEC=-1
+      GO TO 350
+  200 IF(M-LTST)220,220,210
+  210 ASSIGN 220 TO JUMP
+      GO TO 670
+C                       INSERT PEN CODE INTO OUTPUT ARRAY
+  220 IO(M,N)=IPEN
+      M=M+1
+      IF(M.LE.(LTST-1))        RETURN
+      ASSIGN 780 TO JUMP
+      ASSIGN 280 TO LABEL
+      GO TO 670
+C                       GRAIN FUNCTION USER IMPLEMENT
+  230 IF(IVEC-1)250,240,240
+  240 ASSIGN 250 TO LABEL
+      IVEC=-1
+      GO TO 350
+  250 IXCODE=IRC
+      IYCODE=IOY+32
+      IF(IYCODE.EQ.IG+32)        RETURN
+      IG=IOY
+      IF(M-(LTST-1))120,120,110
+C
+C
+C***************************************************************
+C                    ** VECTOR MODE **
+C                    *****************
+C
+C
+  260 IX=INX-IOX
+      IY=INY-IOY
+C                       IF NEW X AND NEW Y EQUAL 0 THEN RETURN
+      IF(IX .EQ. 0 .AND. IY .EQ. 0)        GO TO 290
+C                       IS THERE A PREVIOUS VECTOR ?
+      IF(IVEC-1)270,300,300
+C                       NO PREVIOUS VECTOR- INXX, INYY RETAIN OLD VECTOR
+  270 INXX=IX
+      INYY=IY
+C                       SET PREVIOUS VECTOR SWITCH ON
+      IVEC=1
+      IRD=1
+  280 RETURN
+  290 IF(IVEC.EQ.-1)   RETURN
+      IX=INXX*IRD
+      IY=INYY*IRD
+      RETURN
+C                       COMPARE OLD VECTORS TO NEW VECTORS
+  300 IF(INXX-IX)320,310,320
+  310 IF(INYY-IY)320,330,320
+C                       OLD VECTORS AND NEW VECTORS ARE NOT THE SAME. OU
+C *** ICK= SWITCH TO INDICATE THERE ARE NEW VECTORS WAITING
+  320 ICK=1
+C                       IKN,ILN= STORE NEW VECTOR UNTIL LATER
+      IKN=IX
+      ILN=IY
+      IX=INXX*IRD
+      IY=INYY*IRD
+      IRD=1
+      GO TO 350
+C                       OLD VECTORS AND NEW VECTORS ARE THE SAME.
+C                        IRD= NUMBER OF VECTOR LENGTHS
+  330 IRD=IRD+1
+      IX=INXX*IRD
+      IY=INYY*IRD
+      RETURN
+C                       RESTORE NEW VECTORS
+  340 IX=IKN
+      IY=ILN
+      IRE=-1
+      GO TO 270
+C *** CALCULATE NUMBER OF MAXIMUM VECTOR SEGMENTS OF 28 INCREMENTS
+C *** NEEDED TO OUTPUT VECTORS
+C ***  INCR= 28 INCREMENTS
+  350 ASSIGN 410 TO JUMP
+      IXSN=0
+      IYSN=0
+      IXX=IABS(IX)
+      IYY=IABS(IY)
+      AXX=IXX
+      AYY=IYY
+      IMX=INCR
+      IMY=INCR
+      AMX=INCR
+      AMY=INCR
+      IXSN=64+IXSN
+      IYSN=64+IYSN
+      IF(IX.LT.0)IXSN=32
+      IF(IY.LT.0)IYSN=32
+      IF(KU.NE.1)GO TO 380
+      IF(IYY-IXX)360,380,370
+  360 AMY=FLOAT(INCR)*AYY/AXX
+      IMY=AMY
+      IF(IMY.EQ.0)        GO TO 380
+      GO TO 420
+  370 AMX=FLOAT(INCR)*AXX/AYY
+      IMX=AMX
+      IF(IMX.EQ.0)        GO TO 380
+      GO TO 420
+C                       CALCULATE IF AUTOMATIC GRAIN FUNCTION CAN BE USE
+  380 IF(ICIRCL)390,390,420
+  390 IF(IG.NE.1)        GO TO 420
+      IGR=MAX0(IXX,IYY)
+C *** MINIMUM VALUE TO PASS THROUGH GRAIN 3(X,Y)PAIRS 28*28*3=2352
+      IF(IGR-2352)420,400,400
+  400 IGAIN=1
+      ICAN=-1
+      GO TO 420
+C                       BEGINNING OF VECTOR CALCULATION LOOP
+  410 CONTINUE
+      AXX=AXX-AMX
+      IXX=MAX0(IXX-I,0)
+      AYY=AYY-AMY
+      IYY=MAX0(IYY-J,0)
+  420 CONTINUE
+      I=MAX0(0,MIN0(IXX,IMX+IXX-MAX0(0,IFIX(AXX))))
+      J=MAX0(0,MIN0(IYY,IMY+IYY-MAX0(0,IFIX(AYY))))
+C                       CALCULATE THE REPEAT COUNT
+C                        IRE= NUMBER OF REPEAT COUNTS
+      IF(IXCODE.EQ.(I+IXSN).AND.IYCODE.EQ.(J+IYSN))        GO TO 440
+      IF(IRE+1)430,430,450
+  430 IXCODE=I+IXSN
+      IYCODE=J+IYSN
+  440 IRE=IRE+1
+      GO TO 410
+C                       END OF VECTOR CALCULATION LOOP *********
+C *** IS REPEAT COUNT(IRE).GT.MAXIMUM REPEAT COUNTER?
+  450 IF(IRE-27)460,460,570
+C *** SMALL REPEAT COUNT LEFT TO OUTPUT
+  460 KT=1
+      IT=1
+      IRT=IRE
+  470 IF(M-(LTST-1))490,490,480
+  480 ASSIGN 490 TO JUMP
+      GO TO 670
+C       IKT= OLD REPEAT CODE. IF(IRT.EQ.IKT)DO NOT OUTPUT REDUNDANT
+C               REPEAT CODE
+  490 IF(IRT.EQ.IKT)        GO TO 500
+C                       IRC=? SIGNAL THAT REPEAT CODE FOLLOWS
+      IO(M,N)=IRC
+C                       REPEAT CODE
+      IO(M+1,N)=(IRT+64)
+C                       KITTY= RETAIN OLD REPEAT CODE FOR SYMBOL INSPECT
+      KITTY=IRT+64
+      IKT=IRT
+C                       SET SWITCHES FOR PTC5-1
+      M=M+2
+      IZ=0
+  500 IZ=IZ+1
+      IF(M-(LTST-1))520,520,510
+  510 ASSIGN 520 TO JUMP
+      GO TO 670
+C                       SPACES ARE NOT USED- REPLACE SPACE WITH @
+  520 IF(IXCODE.EQ.32)IXCODE=64
+      IF(IYCODE.EQ.32)IYCODE=64
+C                       OUTPUT VECTOR CODES
+      IO(M,N)=IXCODE
+      IO(M+1,N)=IYCODE
+      M=M+2
+C                       AUTOMATIC GRAIN WAS USED. SET GRAIN TO NORMAL AG
+      IF(IGAIN.EQ.1.AND.ICAN.EQ.1)        GO TO 526
+      GO TO 525
+C *** UPDATE MADE 3-2-78 WAS ( BEFORE IT NEXT LINE
+  526 IF(IRE-(IT*28))610,610,527
+  527 IRE=IRE-(28*IT)
+      IT=IRE/28
+      IZ=0
+      IF(IT-1)610,610,580
+ 525  GO TO (530,550),KT
+C                       IF(I+J).EQ.0 WE ARE FINISHED WITH THIS MOVE
+  530 IF(I+J)540,780,540
+  540 IRE=-1
+      GO TO 430
+  550 IF(IZ-IT)500,560,560
+  560 IRE=IRE-(IT*28)
+      GO TO 460
+C                       FIND OUT NUMBER OF REPEAT COUNTS NECESSARY
+C                        IT= NUMBER OF MAXIMUM REPEAT COUNTS
+C                        IRT= MAXIMUM REPEAT COUNT OF 27
+C                        KT= SWITCH TO INDICATE LARGE REPEAT OR SMALL RE
+C                        KT=2 LARGE MOVE
+  570 IT=IRE/28
+      IRT=27
+      KT=2
+      IZ=0
+      IF(IGAIN.EQ.1.AND.ICAN.EQ.-1)          GO TO 580
+      GO TO 470
+C                       AUTOMATIC GRAIN CAN BE USED TO COMPRESS CODE
+  580 IF(M-(LTST-1))600,600,590
+  590 ASSIGN 600 TO JUMP
+      GO TO 670
+C                       OUTPUT NEEDED GRAIN MULTIPLIER
+  600 IO(M,N)=IRC
+      IF(IT.GT.28)IT=27
+      IO(M+1,N)=(IT+32)
+      M=M+2
+C                       ICAN= WE ARE USING GRAIN
+      ICAN=1
+      GO TO 470
+  610 IF(M-(LTST-1))640,640,620
+  620 ASSIGN 640 TO JUMP
+      GO TO 670
+C                       RETURN TO NORMAL GRAIN- CODE IS REPEAT='?' FOLLO
+C                       GRAIN(1)='_'
+  640 IO(M,N)=IRC
+      IO(M+1,N)=33
+      M=M+2
+C                       IGAIN=-1 WE ARE NOT AT PRESENT USING GRAIN
+      IGAIN=-1
+      ICAN=-1
+      GO TO 560
+C
+C
+C************************************************************
+C                    ** BUFFER DUMP/PRINT ROUTINE **
+C                    *******************************
+C                       DUMP BUFFER ENTRY TO MOVER
+C
+  650 IF(IVEC-1)669,660,660
+  660 ASSIGN 669 TO LABEL
+      IVEC=-1
+      ICK=-1
+      GO TO 350
+  669 ICK=1
+C                       PRINT ROUTINE
+  670 IF(IABS(IOX).EQ.28000)        M=M-1
+      IF(M.GT.LTST)M=LTST
+      IF(IOFL.EQ.2)GO TO 740
+  680 IF(INUM.EQ.1.OR.M.LE.LTST1)GO TO 710
+C                       DUMP 5 96 CHAR RECORDS FOR PTC5-3
+      NMX=M/LTST1
+      MLAS=NMX*LTST1
+C *** DUMP 96 CHARS FOR PTC5-1, DUMP 5*96 CHARS SUPPRESSING
+C *** LINEFEEDS BETWEEN BUFFERS FOR PTC5-3
+C *** SOFTWARE ELIMINATES NEEDLESS BLANKS IF BUFFER NOT COMPLETELY
+C *** USED.
+      MST=MLAS+1
+      DO 690 NN=1,NMX
+  690 CALL IMGOUT (IO(1,NN), LTST1)
+      IF (MLAS .NE. M) GO TO 700
+C      CALL IMGOUT (10, 1)
+      GO TO 730
+700   CONTINUE
+      CALL IMGOUT (IOP(MST), M-MST+1)
+C      CALL IMGOUT (10, 1)
+      GO TO 730
+C                       DUMP 96 CHAR RECORD FOR PTC5-1
+  710 CALL IMGOUT (IOP, M)
+C      CALL IMGOUT (10, 1)
+  730 IF (IOFL .EQ. 1)        GO TO 760
+C      CALL IMGOUT (17, 1)
+C
+C *** ACK/NAK SEQUENCE *******************************************
+C ***  IWAIT=CONTROLLER'S RESPONSE
+C ***  IWAIT=1H1 PTC5-1 RECEIVED BUFFER CORRECTLY
+C ***  IWAIT=1H3 PTC5-3 RECEIVED BUFFER CORRECTLY
+C ***  IWAIT=1H0 RETRANSMIT PREVIOUS BUFFER
+C
+      CALL IMGIN (IWAIT)
+C      CALL IMGOUT (10, 1)
+C CHECK FOR ERROR RESPONSE
+      IF(IWAIT.NE.I0)GO TO 770
+      IF(IDES)680,680,739
+  739 IO(1,N)=IBLNK
+      IO(2,N)=IBLNK
+      IDES=-1
+      GO TO 680
+  740 CONTINUE !CALL IMGOUT (ICOL, 1)
+C      CALL IMGOUT (ICOL, 1)
+      CALL IMGOUT (IOP, M)
+C      CALL IMGOUT (10, 1)
+      GO TO 770
+  760 CONTINUE !CALL IMGOUT (IXOFF, 1)
+  770 IOP(LTST)=IFIL
+      N=1
+      M=1
+      IF(IDES.EQ.1)IDES=-1
+      IF(IABS(IOX).NE.28000)        GO TO JUMP
+      IF(ICK.EQ.-1)GO TO JUMP
+      IVEC=-1
+      ICK=-1
+      IF(IOFL.EQ.2)        RETURN
+C *** DESELECT PLOTTER *********************************************
+C      CALL IMGOUT (ISTOP, 1)
+C *** GET READY TO DO ANOTHER PLOT
+      IO(1,N)=ISCOL
+      IO(2,N)=ICOL
+      IDES=1
+      M=3
+      RETURN
+  780 IF(ICK.EQ.-1)GO TO LABEL
+      ICK=-1
+C *** RETURN TO SET UP A PREVIOUS VECTOR CONDITION
+      GO TO 340
+C
+C
+C************************************************************
+C               ** INITIALIZE I/O PARAMETERS **
+C               *******************************
+C               IRES = PLOTTER RESOLUTION IN INCR/INCH
+C
+C
+  790 IUNIT=IOY
+      IOFL=-1
+C                       CALCULATE MINIMUM LINE SEGMENT FOR GRAIN
+      IF(INY.EQ.2)IOFL=1
+      IF(INY.EQ.5)        GO TO 820
+C                       IOFL=-1 ON-LINE MODE
+C                       IOFL=1  OFF-LINE MODE TO TAPE CASSETTE
+C                       IOFL=2  BATCH TERMINAL USE(REQUIRES SPECIAL HARD
+  800 IO(1,1)=ISCOL       ! DET AUG 1995
+      IO(2,1)=ICOL        ! DET AUG 1995
+      CALL IMGOUT (IO, 2) ! DET AUG 1995
+C      CALL IMGOUT (ISCOL, 1)  ! DET AUG 1995
+C      CALL IMGOUT (ICOL, 1)   ! DET AUG 1995
+C      CALL IMGOUT (10, 1)
+C *** SELECT PLOTTER *************************************************
+C *** PRINT DC3 TO TURN OFF TAPE CASSETTE
+C      IF (IOFL .EQ. 1)  CALL IMGOUT (IXOFF, 1)
+      IF (IOFL .EQ. 1)        GO TO 810
+C      CALL IMGOUT (17, 1)
+      CALL IMGIN (IWAIT)
+C      CALL IMGOUT (10, 1)
+C *** READ ACKNOWLEDGEMENT BY PTC5
+C ***  (1,CR)= PTC5-1 O.K. SEND A BUFFER
+C ***  (0,CR)= PTC5-1/3 RETRANSMIT
+C ***  (3,CR)=PTC5-3 O.K. SEND A BUFFER
+C
+      IF(IWAIT.EQ.I1)        GO TO 810
+      IF(IWAIT.EQ.I0)        GO TO 800
+      IF(IWAIT.EQ.I3)        GO TO 830
+      GO TO 830
+C                       SET FLAGS FOR ON LINE PTC5-1
+  810 CONTINUE
+      ICIRCL=1
+      IF(INY.EQ.2)ICIRCL=-1
+      INUM=1
+      LTST1=LTST
+      NN=1
+      RETURN
+C                       SET SWITCHES FOR PTC5-3 WITH CASSETTE
+  820 IOFL=2
+      ICIRCL=-1
+      LTST=129
+      INUM=1
+      LTST1=LTST
+      RETURN
+C                       SET SWITCHES FOR PTC5-3
+  830 CONTINUE
+      ICIRCL=-1
+      LTST1=LTST
+      LTST=ILMEM
+      INUM=5
+      RETURN
+  840 FORMAT(A1)
+C************************************************************
+C                    **USE HARDWARE TO GENERATE CHAR STRING**
+C                    ****************************************
+C                       KKL=-1: LAST STRING NOT TERMINATED
+  850 IF(KKL.EQ.-1)        GO TO 880
+      IF((M+3)-LTST)870,870,860
+  860 ASSIGN 870 TO JUMP
+      M=M-1
+      GO TO 670
+  870 CONTINUE
+C                       SELECT CHARACTER GENERATOR MODE AVOID REDUNDANT
+      IO(M,N)=IRC
+      IO(M+1,N)=IHT
+      IF(KITTY.EQ.IHT)M=M-2
+      KITTY=IHT
+      IO(M+2,N)=61
+      IO(M+3,N)=ITH
+      M=M+4
+      MMM=M+NCHAR-1
+  880 KKL=IOX
+C                      COPY CHARACTERS FROM LBL ARRAY INTO IO ARRAY
+      III=0
+  890 III=III+1
+      IF (III.GT.NCHAR)        GO TO 920
+      IF (M - LTST)        910, 910, 950
+  910 JJ = LBL(III)
+      IF ((JJ .LT. 32) .OR. (JJ .GE. 94)) JJ = 32
+      IO(M,N) = JJ
+      M=M+1
+      IF(NCHAR.EQ.1)        GO TO 920
+C                       ARE WE FINISHED OUTPUTTING CHARACTER STRING?
+      IF(M.GT.MMM)        GO TO 920
+      GO TO 890
+  920 IF(KKL.EQ.-1)        RETURN
+      IF(M-LTST)940,940,930
+  930 ASSIGN 940 TO JUMP
+      GO TO 670
+C                       DESELECT CHARACTER GENERATOR MODE
+  940 IO(M,N)=ISTOP
+      M=M+1
+      IKT=-1
+      IVEC=-1
+      RETURN
+  950 ASSIGN 910 TO JUMP
+      MMM=(MMM-M)+1
+      GO TO 670
+  960 IF(M-LTST)980,980,970
+  970 ASSIGN 980 TO JUMP
+      GO TO 670
+  980 IO(M,N)=ISTOP
+      M=M+1
+      KKL=1
+      IKT=-1
+      IVEC=-1
+      GO TO 30
+      END
+      SUBROUTINE NEWPN (IP)
+C
+C            THIS SUBROUTINE IS USED TO SELECT THE OPTIONAL PENS
+C       AVAILABLE  ON  SOME  PLOTTERS.   PEN 1 IS ALWAYS ASSUMED
+C       UNLESS NEWPN IS  CALLED.   THE  OFFSET  IN  THE  PEN  IS
+C       AUTOMATCALLY ACCOUNTED FOR.
+C
+C
+C      Modified by DET in Sep 2005 to make g77 happy.
+C       The fifth argument to MOVER must be a byte.
+C
+      COMMON /RZXMBI/ KU, ICIRCL, ST, SS, WP, IGENSY
+      DATA IPD, KPD /2*1/
+      DATA LPD/11/
+
+      BYTE LBL
+
+      SAVE LPD, KPD
+
+      IF (IP .EQ. LPD)    RETURN
+      LPD = IP
+      LBL = 0
+      CALL MOVER (-27000, -27000, -27000, -27000, LBL, 0, 0)
+      IPD = IP
+      YD = (KPD - IPD) * WP
+      KPD = IPD
+      CALL MOVER (29999, IPD, 0, 0, LBL, 0, 0)
+      CALL WHERE (X, Y, FAC)
+      CALL PLOT (X,Y-YD/FAC,0)
+      CALL PLOT(X,Y,9)
+      RETURN
+      END
+      SUBROUTINE NUMBER (X, Y, HH, FLT, THETA, NN)
+C
+C            THIS SUBROUTINE IS SIMILAR TO  SYMBOL  EXCEPT  THAT
+C       THE  CHARACTERS  PLOTTED  ARE GENERATED BY CONVERSION OF
+C       FLOATING POINT NUMBER.  ARGUMENTS X, Y, AND  THETA  HAVE
+C       THE  SAME  MEANING  AS  IN  SYMBOL.  THE MAGNITUDE OF HT
+C       DETERMINES THE SIZE AS IN SYMBOL, BUT IF IT IS POSITIVE,
+C       THE  NUMBER  BEGINS  AT  THE  POINT  (X,Y).   IF  IT  IS
+C       NEGATIVE, THE NUMBER ENDS AT (X,Y).  THE  NUMBER  TO  BE
+C       CONVERTED  IS  IN  THE  VARIABLE  FLT.  NN SPECIFIES THE
+C       NUMBER OF DIGITS AFTER THE DECIMAL POINT.  IF  NN=0,  NO
+C       CHARACTERS  APPEAR  AFTER THE DECIMAL POINT AND IF NN=-1
+C       THE DECIMAL POINT IS SUPPRESSED.
+C
+      DIMENSION IS1(1)
+      BYTE IS1
+      DATA IDEC, MIN, NBIAS / 46, 45, 48/
+
+      SAVE
+
+      NC = -9
+      LANK = 32
+      HT = ABS(HH)
+      TF = ABS(FLT)
+      ISCL = .5 + HT * 100.
+      ID = THETA + SIGN(.5, THETA)
+      CALL QXDRAW (ISCL, ID, 1)
+      F = .01 * ISCL
+      G = .01 * ID
+      IF (HH .LT. 0.)                GO TO 190
+      XT = X
+      YT = Y
+      ISGN = 1
+   10 ISN = LANK
+      IF (FLT .LT. 0.)                ISN = MIN
+      RND = .5
+      N = NN
+      IF (NN .LT. 1)                GO TO 180
+      FC = .1
+      FD = 1.
+      N1 = NN
+   20 DO 30 ID = 1, N1
+      TF = FD * TF
+   30 RND = FC * RND
+   40 TF = TF + RND
+      TF = TF / 1.E9
+      N10 = N + 10
+      KLIP = 1
+      INDX = N10
+      ID = 0
+   50 IF (INDX .EQ. 0)                GO TO 160
+      INDX = INDX - 1
+      ID = ID + 1
+      ISCL = TF
+      TF = 10. * (TF - ISCL)
+      ISCL = ISCL + NBIAS
+      IF (ISCL .GT. NBIAS)                GO TO (60, 80), KLIP
+      IS = LANK
+      IF (ISGN .GE. 0)                GO TO (120, 90), KLIP
+      IF (IS .EQ. NBIAS)                GO TO 90
+      GO TO 100
+   60 IS = ISN
+      KLIP = 3
+      IF ((ISGN .LT. 0) .OR. (IS .NE. 32))                GO TO 90
+   70 KLIP = 2
+      LANK = NBIAS
+   80 IS = ISCL
+   90 IS1(1) = IS
+      CALL SYMBOL (XT, YT, HT, IS1, THETA, NC)
+      NC = -10
+  100 YT = YT + G
+      XT = XT + F
+      GO TO (120, 120, 70, 150, 110, 170), KLIP
+  110 RETURN
+  120 IF (ID .NE. 10)                GO TO 50
+      GO TO (130, 140, 50, 150), KLIP
+  130 IS = 56 - ISN / 4
+      KLIP = 2
+      GO TO 90
+  140 IS = IDEC
+      LANK = NBIAS
+      KLIP = 4
+      GO TO 90
+  150 KLIP = 2
+      GO TO 50
+  160 CONTINUE
+      IF (N .GT. (-1))                RETURN
+      IF (KLIP .GT. 1)                GO TO 170
+      KLIP = 6
+      IS = ISN
+      IF ((ISGN .LT. 0) .OR. (IS .NE. 32))                GO TO 90
+  170 IS = TF + NBIAS
+      KLIP = 5
+      GO TO 90
+  180 IF (N .GT. (-2))                GO TO 40
+      N1 = -N - 1
+      N = -1
+      FC = 1.
+      FD = .1
+      GO TO 20
+  190 FN = NN + 12
+      IF (NN .LT. (-1))                FN = 11.
+      ISGN = -1
+      XT = X - FN * F
+      YT = Y - FN * G
+      GO TO 10
+      END
+      SUBROUTINE PENDN
+C
+C       CALLING THIS SUBROUTINE CAUSES THE PEN TO BE LOWERED
+C
+C
+C      Modified by DET in Sep 2005 to make g77 happy.
+C       The fifth argument to MOVER must be a byte.
+C
+      BYTE LBL
+      LBL = 0
+      CALL MOVER (27000, 27000, 27000, 27000, LBL, 0, 0)
+      RETURN
+      END
+      SUBROUTINE PENUP
+C
+C       CALLING THIS SUBROUTINE CAUSES THE PEN TO BE LIFTED.
+C
+C
+C      Modified by DET in Sep 2005 to make g77 happy.
+C       The fifth argument to MOVER must be a byte.
+C
+      BYTE LBL
+      LBL = 0
+      CALL MOVER (-27000, -27000, -27000, -27000, LBL, 0, 0)
+      RETURN
+      END
+      SUBROUTINE PLOT (X, Y, ITEN)
+C
+C            THIS SUBROUTINE IS USED BY THE PROGRAMMER TO  DRIVE
+C       THE  PEN  FROM  ITS  CURRENT POSITION TO A NEW POSITION.
+C       SEVERAL AUXILARY FUNCTIONS ARE PERFORMED BUT  THESE  ARE
+C       NOT  USED  BY THE APLICATIONS PROGRAMMER.  THE FUNCTIONS
+C       OF THE ARGUMENTS ARE:
+C
+C         X,Y   THE  X AND  Y CARTESIAN COORDINATES IN INCHES TO
+C               WHICH THE PEN IS TO BE MOVED.  THEY ARE RELATIVE
+C               TO  THE  MOST  RECENTLY  DEFINED  ORIGIN  (0,0).
+C
+C         ITEN  DEFINES  THE PEN  POSITION  AND AXIS  RELOCATION
+C               0 - NO  PLOTTER OR PEN MOVEMENT.  AXIS REDEFINED
+C                   AT THE POSITION SPECIFIED BY (X,Y).
+C               1 - PEN  MOVES  TO (X,Y)  WITH NO CHANGE IN PEN.
+C               2 - PEN IS DROPPED AND MOVES TO (X,Y).
+C               3 - PEN  IS RAISED  AND PLOTTER  MOVES TO (X,Y).
+C               4 - NO MOTION  --  CURRENT PEN POSITION RETURNED
+C                   IN  (X,Y)  AND  THE  CURRENT VALUE OF FACTOR
+C                   * 1000 IN ITEN.
+C                - NEGATIVE  --  SAME  AS FOR +1, +2, OR +3, BUT
+C                  ORIGIN  IS REDEFINED AT THE NEW PEN POSITION.
+C
+C
+C
+C      Modified by DET in Sep 2005 to make g77 happy.
+C       The fifth argument to MOVER must be a byte.
+C
+      COMMON /RZXMBI/ KU, ICIRCL, SS, ST, WP, IGENSY
+      DATA FA, GR, FAC, IPG/ 100., 1., 100., 850/
+      DATA I9, I7/ 0, 0/, KP/ 1/
+      DATA RES/100./
+
+      BYTE LBL
+
+      SAVE 
+
+      IFUNF(DU) = FA * DU + SIGN(.5, DU)
+      ISIZE(DU) = IFIX(DU * FAC * RES * 0.01 + SIGN(0.5, DU))
+      L8 = ITEN
+      IF (L8 .EQ. 999)                                L8 = -3
+      IF (L8)                                20, 10, 30
+C                       ITEN = 0: DEFINE OUR POSITION AS X,Y
+   10 JOE=IFIX(X*FAC*RES*.01+SIGN(.5,FLOAT(I9)))
+      IG9=FLOAT(I9)/GR+SIGN(.5,FLOAT(I9))
+      I5=I5-IG9+JOE
+      I9 = IFUNF(X)
+      I7 = IFUNF(Y)
+      RETURN
+C                       ITEN < 0: SET NEW ORIGIN FLAG
+   20 KP = -1
+      L8 = -L8
+   30 GO TO (80,70,60,130,140,150,40,160,100,50),L8
+C                       ITEN = 7: SET PLOT SIZE FACTOR
+   40 FAC = 100. * X
+      FA = RES * FAC * GR * .01
+      FA1 = FA
+      RETURN
+C                       ITEN = 10: SCALE OLD X, Y FOR GRAIN SUB
+   50 GR = Y
+      FA = RES * FAC * GR * .01
+      I9 = IFUNF(FLOAT(I9) / FA1)
+      I7 = IFUNF(FLOAT(I7) / FA1)
+      FA1 = FA
+      RETURN
+C                       ITEN = 3: RAISE PEN THEN MOVE
+   60 IF (KU .EQ. 2)                                GO TO 80
+      LBL = 0
+      CALL MOVER (-27000, -27000, -27000, -27000, LBL, 0, 0)
+      GO TO 80
+C                       ITEN = 2: DROP THE PEN THEN MOVE
+   70 IF (KU .NE. 2)                                GO TO 80
+      LBL = 0
+      CALL MOVER (27000, 27000, 27000, 27000, LBL, 0, 0)
+C                       ITEN = 1: MOVE PEN -- NO UP/DOWN
+C                                 OLD (X,Y)=(I9,I7); NEW (X,)=(I8,I6)
+C                                 NEXT CLEAR PAGE EDGE = I5
+   80 IF (ISIZE(X) - I5)                                100, 90, 90
+   90 I5 = I5 + IPG
+      GO TO 80
+C                       ITEN = 9: UPDATE (X,Y) FOR NEWPN SUB
+  100 I8 = IFUNF(X)
+      I6 = IFUNF(Y)
+      LBL = 0
+      CALL MOVER (I9, I7, I8, I6, LBL, 0, 0)
+      IF (KP)                                110, 110, 120
+C                       REDEFINE NEW POSITION AS (0,0)
+  110 I9 = 0
+      I7 = 0
+      I5 = I5 - ISIZE(X)
+      KP = 1
+      RETURN
+C                       UPDATE (I9,I7) WITH NEW POSITION
+  120 I9 = I8
+      I7 = I6
+      RETURN
+C                       ITEN = 4: WHERE FUNCTION
+  130 X = FLOAT(I9) / FA
+      Y = FLOAT(I7) / FA
+      ITEN = FAC * 100.
+      RETURN
+C                       ITEN = 5: INITIALIZE PEN POSITION
+  140 I5 = 0
+      I9 = 0
+      RES = ST * 100.
+      FA = FA * ST
+      FA1 = FA
+      IPG = FLOAT(IPG)* ST
+      DNY = -X
+      UPY = -Y
+C                       ITEN = 6: REINITIALIZE FOR NEW PLOT
+C                                 ADJUST FOR CURRENT GRAIN
+  150 I8 = DNY * GR * RES
+      I7 = 0
+      I5 = I5 * GR
+      LBL = 0
+      CALL MOVER (I9, I7, I5, I8, LBL, 0, 0)
+      I9 = 0
+      CALL MOVER (I9, I7, I9, IFIX(UPY * GR * RES ), LBL, 0, 0)
+      I5 = 0
+      RETURN
+C                       ITEN = 8: CALLED BY SYMBOL TO UPDATE
+C                                 CURRENT PEN POSITION POINTERS
+  160 I8 = IFUNF(X)
+  170 IF (ISIZE(X) - I5)                                190, 180, 180
+  180 I5 = I5 + IPG
+      GO TO 170
+  190 I6 = IFUNF(Y)
+      I9 = I8
+      I7 = I6
+      RETURN
+      END
+      SUBROUTINE SCALE (X, N, S, XMIN, DX)
+C
+C       THIS SUBROUTINE DETERMINES SCALING INFORMATION FOR
+C       AXIS AND LINE ROUTINES.
+C
+C       THE ARGUMENTS ARE:
+C
+C               X       A SINGLE SUBSCRIPTED ARRAY OF VALUES
+C                       THAT ARE TO FIT IN THE LENGTH OF THE
+C                       SCALE PROVIDED.
+C               N       THE NUMBER OF ARGUMENTS IN ARRAY X.
+C               S       THE LENGTH OF THE SCALE IN INCHES (REAL NUMBER)
+C               XMIN    THE SMALLEST VALUE TO BE PLOTTED ON THE SCALE.
+C               DX      THE SCALE INCREMENT PER INCH. DX TAKES
+C                       ON THE FOLLOWING VALUES TO PRODUCE A
+C                       CONVENIENT SCALE:
+C                               DX = K * EXP(M)
+C                               WHERE K = 1, 1.5, 2, 3, 4, 5, 6, 8, OR 1
+C                               AND EXP(M) IS THE BASE 10 ORDER
+C                               OF MAGNITUDE. THE VALUE OF EACH
+C                               OF THE VALUES WILL BE PLOTTED AT
+C                               A POSITION XP = (X - XMIN) / DX.
+C
+      DIMENSION X(N), TST(10)
+      DATA TST/1., 1.5, 2., 3., 4., 5., 6., 8., 10., 20./
+C
+C                       FIND MAX & MIN VALUES OF ARRAY
+C
+      ZMIN = X(1)
+      YMAX = ZMIN
+      DO 10 I = 1, N
+      ZMIN = AMIN1(ZMIN, X(I))
+      YMAX = AMAX1(X(I), YMAX)
+   10 CONTINUE
+C
+C                       FIND THE EXPONENT SIZE
+C
+      DY = ABS((YMAX - ZMIN) / S)
+      IF (DY .EQ. 0)        GO TO 90
+      YMIN = 1.000001 * ALOG10(DY)
+      IF (DY .GE. 1.)        GO TO 20
+      YMIN = AINT(YMIN + 100.) - 100.
+      GO TO 30
+   20 YMIN = AINT(YMIN)
+   30 FACT = 10. ** YMIN * 1.000001
+C
+C                       FIND INTEGRAL MAGNITUDE
+C
+      DY = DY / FACT
+      DO 40 I = 1, 9
+      IF (DY .GT. TST(I))        GO TO 40
+      J = I
+      GO TO 50
+   40 CONTINUE
+C
+C                       ADJUST SCALES TO ASSURE FIT
+C
+   50 DY = FACT * TST(J)
+      YMIN = AINT(ZMIN / DY) * DY
+      IF (ZMIN .GE. YMIN)        GO TO 60
+      YMIN = YMIN - DY
+   60 IF (S .GE. (YMAX - YMIN) / DY)        GO TO 70
+      J = J + 1
+      GO TO 50
+C
+C                       CONVERT DATA TO INCHES
+C
+   70 DO 80 I = 1, N
+   80 X(I) = (X(I) - YMIN) / DY
+   90 CONTINUE
+      XMIN = YMIN
+      DX = DY
+      RETURN
+      END
+      SUBROUTINE SYMBOL (X, Y, HT, IHOL, ANGLE, N)
+C
+C
+C       THIS SUBROUTINE IS USED FOR GENERATING ALPHANUMERIC AND
+C       SPECIAL CHARACTERS SO THAT PLOTS MAY BE ANNOTATED DIRECTLY.
+C       THE ARGUMENTS ARE:
+C
+C               X,Y     THE COORDINATES OF THE LOWER LEFT HAND
+C                       CORNER OF THE FIRST CHARACTER TO BE
+C                       DRAWN UNLESS N=-1. FOR N=-1 AND FOR
+C                       CHARACTERS DRAWN THROUGH MARKER AND
+C                       LINE THE CHARACTERS IS CENTERED ON (X,Y).
+C
+C               HT      THE HEIGHT OF A CHARACTER. IT MUST BE AN
+C                       INTEGER MULTIPLE OF 7 PLOTTER INCREMENTS.
+C
+C               IHOL    A SINGLE SUBSCRIPTED ARRAY CONTAINING
+C                       THE CHARACTERS TO BE PLOTTED.
+C
+C               ANGLE   THE ANGLE IN DEGREES THAT THE CHARACTERS
+C                       ARE TO BE PLOTTED AT.
+C
+C               N       THE NUMBER OF CHARACTERS CONTAINED IN
+C                       IHOL. IF N=0 OR N=-1 THERE IS ONLY ONE
+C                       CHARACTER RIGHT JUSTIFIED IN IHOL.
+C               N=-9    THE FIRST CALL FROM NUMBER
+C               N=-10   SUCCESIVE CALLS FROM FROM NUMBER. NUMBER
+C                       TRANSFERS 1 CHARACTER PER CALL BUT DOES
+C                       ITS OWN SETUP.
+C
+C       EACH CHARACTER IS HT HIGH AND HT*4/7 WIDE. AN ADDITIONAL
+C       SPACE OF HT*2/7 IS ALLOWED BETWEEN CHARACTERS.
+C
+C
+C
+C      Modified by DET in Sep 2005 to make g77 happy.
+C       The fifth argument to MOVER must be a byte.
+C
+      COMMON /RZXMBI/ KU, ICIRCL, SS, ST, WP, IGENSY
+      DIMENSION IHOL(1)
+      BYTE IHOL
+
+      DATA OFST/.42857142/
+      DATA KKK/1/, THETH/-900./
+
+      SAVE
+
+      ISTH = -1
+      THETA = ANGLE
+      IANG = ANGLE
+      IF (IANG .EQ. 3600)                ISTH = 1
+      IF (N .EQ. -1 .AND. THETA .NE. 3600.)                GO TO 230
+      IF (THETA .EQ. 3600.)                THETA = 0.
+      IF (ISTH .EQ. 1)                GO TO 10
+      IF (THETA - THETH)                10, 110, 10
+   10 IF (ABS(THETA) - 90.)                20, 30, 50
+C                       1ST OR 4TH QUADRANT
+   20 IF (THETA .NE. 0.)                GO TO 230
+C               HERE WHEN ANGLE = 0 DEGREES
+      ITHETA = 49
+      IF (ISTH .EQ. 1 .AND. ICIRCL .LT. 0)                ITHETA = 64
+      ASINT = 0.
+      ACOST = 1.
+      GO TO 100
+C               HERE WHEN ANGLE = -90 DEGREES
+   30 IF (THETA - 90.)                90, 40, 40
+C               HERE WHEN ANGLE = +90 DEGREES
+   40 ITHETA = 50
+      IF (ISTH .EQ. 1 .AND. ICIRCL .LT. 0)                ITHETA = 65
+      ASINT = 1.
+      ACOST = 0.
+      GO TO 100
+C                       2ND OR 3RD QUADRANT
+   50 IF (ABS(THETA) - 180.)                230, 60, 70
+C               HERE WHEN ANGLE = 180 DEGREES
+   60 ITHETA = 48
+      IF (ISTH .EQ. 1 .AND. ICIRCL .LT. 0)                ITHETA = 66
+      ASINT = 0.
+      ACOST = -1.
+      GO TO 100
+   70 IF (ABS(THETA) - 270.)                230, 80, 230
+C                       ANGLE = 270 DEG
+   80 IF (THETA - 270.)                40, 90, 90
+   90 ITHETA = 51
+      IF (ISTH .EQ. 1 .AND. ICIRCL .LT. 0)                ITHETA = 67
+      ASINT = -1.
+      ACOST = 0.
+C                       COME HERE AFTER FINDING ANGLE CHAR
+  100 THETH = THETA
+      IF (ISTH .EQ. 1 .AND. ICIRCL .LT. 0)                THETH = 3600.
+C                       COME HERE IF ANGLE = LAST ANGLE
+  110 CONTINUE
+      CALL WHERE (XXX, YYY, FACT)
+      IF (SS.LT.1.0) GO TO 230
+  120 HMIN = .07 / SS
+	IF (IGENSY.NE.1) GOTO 230
+      IF ((HT * FACT) - HMIN)                230, 150, 130
+C                               FIND HT MULTIPLE FOR HARDWARE
+  130 IHMIN = HMIN * 1000. + .5
+      AHT = HT * FACT
+      IAHT = AHT * 1000. + .5
+      IREM1 = MOD(IAHT, IHMIN)
+      IREM2 = IHMIN - IREM1
+      IF (IREM1 .LE. 10 .OR. IREM2 .LE. 10)                GO TO 140
+      GO TO 230
+  140 MULT = IAHT / IHMIN
+      IF (IREM1 .LE. 10)                MULT = MULT - 1
+      GO TO 160
+C                               CHAR = EXACT SIZE
+  150 MULT = 0
+C                               CONTINUE CHAR SIZING
+  160 ITT = MULT + 64
+  170 IF (ITT .GE. 93)                GO TO 230
+      IF (N .LE. 0)                GO TO 220
+C                               CONTINUE IF SEVERAL CHAR IN IHOL
+      NWORDS = N / 4
+      IF (4 * NWORDS .LT. N)                NWORDS = NWORDS + 1
+      IF (NWORDS .LT. 1)                NWORDS = 1
+      KKK = 1
+      NCHARS = N
+C                               POSITION PEN
+  180 XX = X
+      YY = Y
+      IF (N + 1)                200, 190, 200
+  190 IF (ICIRCL .LT. 0)                GO TO 200
+C                               OFFSET FOR MARKER W/O HARDWARE GEN
+      FMCTR = (OFST * (FLOAT(MULT) + 1) * HMIN) / FACT
+      XX = XX - FMCTR
+      YY = YY - FMCTR
+  200 CALL PLOT (XX, YY, 3)
+C                               CALL HARDWARE GENERATOR
+  210 CALL MOVER (KKK, ITT, ITHETA, NWORDS, IHOL, NCHARS, -1)
+      IF (ISTH .EQ. 1 .AND. ICIRCL .LT. 0)                RETURN
+C                               UPDATE PEN POSITION
+      RMILT = MULT + 1
+      HIT = (RMILT * HMIN) / FACT
+      SNJ = HIT * ASINT
+      CSJ = HIT * ACOST
+      XX = XX + CSJ * (6. / 7.) * NCHARS
+      YY = YY + SNJ * (6. / 7.) * NCHARS
+      CALL PLOT (XX, YY, 8)
+      KKK = 1
+      RETURN
+C                               ONLY ONE CHAR IN IHOL
+  220 KKK = -1
+      NCHARS = 1
+      NWORDS = 1
+      IF (N .EQ. -10)                GO TO 210
+      GO TO 180
+  230 IF (N .EQ. -9)                N = 0
+      IF (N .EQ. -10)                N = -2
+      CALL SYMB1 (X, Y, HT, IHOL, ANGLE, N)
+      THETH=-999.
+      ISTH=-1
+      RETURN
+      END
+      SUBROUTINE SYMB1 ( XX, YY, HT, IHOL, ANGLE, N)
+C
+C       THIS SUBROUTINE WAS SPIKED FROM THE SIMILAR SUBROUTINE
+C       FOR THE T.I. 980 COMPUTER.
+C         THIS SUBROUTINE WAS SUBSEQUENTLY MODIFIED BY ROSS REYNOLDS
+C       TO ALLOW LOWER CASE CHARACTERS AND FIX THE 0,O,Q CHARS.
+C
+C           THIS  SUBROUTINE   DRAWS   SYMBOLS   THAT   ARE   OF
+C       NON-STANDARD  SIZE  OR  ANGLE  THOUGH THE USE OF LOOK-UP
+C       TABLES AND VECTOR CALLS FOR PEN MOTION.   THE  ARGUMENTS
+C       ARE  THE  SAME AS SYMBOL AND IT WILL ONLY BE CALLED FROM
+C       SYMBOL.
+C
+C
+      DIMENSION IHOL(1), ICHAR(2), ID(90), IT(283), IT2(107), IT1(176)
+      BYTE IHOL
+      INTEGER*2 ID, IT, IT2, IT1, IFUDGE
+C
+C           EACH ELEMENT OF THE ARRAY "ID" CORRESPONDS TO ONE OF
+C       THE PRINTING ASCII CHARACTERS (NO LOWER CASE).  THE LEFT
+C       BYTE  CONTAINS  THE  NUMBER  OF STROKES USED TO FORM THE
+C       CHARACTER AND THE RIGHT BYTE CONTAINS THE INDEX IN ARRAY
+C       "IT"  OF  THE FIRST STROKE TO BE USED.  ID = STR * 256 +
+C       BEG WHERE STR IS THE NUMBER OF STROKES AND  BEG  IS  THE
+C       INDEX  TO  THE  FIRST  WORD  IN "IT".  THE "ID" ARRAY IS
+C       EQUIVALENT TO THE FOLLOWING TABLE:
+C
+C
+C       NO OCT CHR STR BEG NO OCT CHR STR BEG NO OCT CHR STR BEG
+C       == === === === === == === === === === == === === === ===
+C        1  41  !    4   1 22  66  6   11  65 43 113  K    6 143
+C        2  42  "    4   3 23  67  7    5  80 44 114  L    3 145
+C        3  43  #   11   5 24  70  8   16  83 45 115  M    5 147
+C        4  44  $   12  11 25  71  9   12  91 46 116  N    4 150
+C        5  45  %   11  17 26  72  :    4  97 47 117  O    9  49
+C        6  46  &   10  24 27  73  ;    7  38 48 120  P    7 119
+C        7  47  '    2  29 28  74  <    3  99 49 121  Q   11  48
+C        8  50  (    4  30 29  75  =    4 101 50 122  R    8 119
+C        9  51  )    4  32 30  76  >    3 103 51 123  S   12  84
+C       10  52  *    8  34 31  77  ?    7 105 52 124  T    4 152
+C       11  53  +    4  36 32 100  @    8 109 53 125  U    6 140
+C       12  54  ,    4  38 33 101  A    8 113 54 126  V    3 154
+C       13  55  -    2 174 34 102  B   11 117 55 127  W    5 156
+C       14  56  .    5  45 35 103  C    8 123 56 130  X    4  22
+C       15  57  /    2  22 36 104  D    7 129 57 131  Y    5 159
+C       16  60  0   10  49 37 105  E    7 133 58 132  Z    4 162
+C       17  61  1    5  55 38 106  F    6 133 59 133  [    4 164
+C       18  62  2    8  58 39 107  G   11 123 60 134  \    2 166
+C       19  63  3   13  62 40 110  H    6 142 61 135  ]    4 167
+C       20  64  4    7  71 41 111  I    6 137 62 136  ^    5 169
+C       21  65  5    9  75 43 112  J    5 140 63 137  _    5 172
+C
+C       64 140       1 174
+C       65 141  a    9 175 74 152  j    6 216 83 163  s    10 255
+C       66 142  b    9 180 75 153  k    7 219 84 164  t     7 260
+C       67 143  c    8 185 76 154  l    5 223 85 165  u     7 264
+C       68 144  d   10 189 77 155  m   10 226 86 166  v     3 268
+C       69 145  e   10 194 78 156  n    8 231 87 167  w     9 270
+C       70 146  f    7 199 79 157  o    9 235 88 170  x     4 275
+C       71 147  g   12 203 80 160  p   12 240 89 171  y     9 277
+C       72 150  h    8 209 81 161  q   12 246 90 172  z     4 282
+C       73 151  i    6 213 82 162  r    6 252 
+C
+C
+C       NOTE: CHARACTER 63(OCT 137) CANNOT BE PLOTTED
+C
+C
+      DATA ID/
+     1 1025, 1027, 2821, 3083, 2833, 2584,  541, 1054, 1056,
+     2 2082, 1060, 1062,  686, 1325,  534, 2609, 1335, 2106,
+     3 3390, 1863, 2379, 2881, 1360, 4179, 3163, 1121, 1830,
+     4  867, 1125,  871, 1897, 2157, 2161, 2933, 2171, 1921,
+     5 1925, 1669, 2939, 1578, 1673, 1420, 1679,  913, 1427,
+     6 1174, 2353, 1911, 2864, 2167, 3156, 1176, 1676,  922,
+     7 1436, 1046, 1439, 1186, 1188,  678, 1191, 1149, 1452,
+     8  430, 2479, 2484, 2233, 2749, 2754, 1991, 3275, 2257,
+     9 1749, 1752, 2011, 1503, 2786, 2279, 2539, 3312, 3318,
+     A 1788, 2815, 2052, 2056, 1036, 2574, 1299, 2581, 1306/ 
+C
+C
+C           THE  ARRAY "IT" CONTAINS THE ACTUAL COORDINATES USED
+C       IN FORMING THE CHARACTERS.  ONE 8 BIT BYTE IS  USED  FOR
+C       EACH  COORDINATE  PAIR  RESULTING IN 2 STROKE-COORDINATE
+C       PAIRS PER WORD.  THE FIRST CHAR IN  THE  BYTE  SPECIFIES
+C       THE  X COORDINATE (0<X<7) AND THE SECOND SPECIFIES THE Y
+C       COORDINATE (0<=Y<8).  SETTING X=0 CAUSES THE BYTE TO  BE
+C       SKIPPED  AND  ADDING  8 TO Y CAUSES THE PEN TO BE RAISED
+C       BEFORE MOVING.  IT IS PUT DOWN AFTER MOVING.
+C
+C
+      DATA IT1/
+     1 14130, 14640, 10021, 20293,  4690, 16961, 17732, 21524,
+     2  9253,  8448, 12343, 13910,  9749,  9284, 21330, 16657,
+     3 12368, 21042, 12351, 13589,  5888, 22288,  8016, 21040,
+     4  8209,  4934, 14119,  9297, 14133, 18230, 12608, 10038,
+     5 12576,  4437, 22805,  6995, 15665,  8258, 12849, 15172,
+     6 13312,  4119,  5204, 22352,  8241, 12321,  8192, 16976,
+     7 10304, 20822, 18215,  5649,  8263, 12800,  9783, 12320,
+     8 16384,  5671, 18262, 21521,  4176,  5671, 18262, 21828,
+     9  9284, 21329, 16416,  4374, 10055, 22016,  5906, 21071,
+     A 16432, 20480,  4384, 16465, 21316,  5143, 22272,  5655,
+     B 22358,  8192,  9235,  4384, 16465, 21316,  9237,  5671,
+     C 18262, 21828,  4384, 16465, 22087, 10006,  5155, 17236,
+     D 13620, 14897, 17699, 16640,  5461,  6738,  9539,  8448,
+     E  5943, 17956,  8745,  8192, 17444,  8770, 17685,  4417,
+     F  4118, 10055, 22096, 21267, 17491, 20800,  4119, 18262,
+     G 21828,  5200, 22087, 10006,  4384, 16465, 21347, 17152,
+     H  4119, 18262, 20800,  4096, 22295,  5188,  5136, 20480,
+     I  8256, 12343, 10055, 22353, 16416,  4375, 18196, 20500,
+     J  5904, 20480,  4119, 13143, 20480,  4119, 20567, 12343,
+     K  5975,  5936, 22272,  5904, 13392, 22272, 12341,  5941,
+     L 22272,  5975,  4176, 18215,  8256,  5968, 10055, 16416,
+     M  5174, 21558, 12544, 12563, 13568,  4947,  4900, 17491/
+
+      DATA IT2/
+     N 20512,  4386, 20992,  5905,  8256, 20819, 17444,  4864,
+     O 21316,  9235,  4384, 16465, 22352, 22848,  8209,  4900,
+     P 17491, 20800,  8209,  4900, 17491, 21010, 22087, 14118,
+     Q  8268,  5120, 21314,  8723,  5157, 17748, 20800,  8209,
+     R  5927,  8235, 13380, 21328, 13612, 13360, 10304, 17724,
+     S 17473, 12321,  5927,  8234, 17450, 20480, 10039, 12328,
+     T 16384,  5136, 15152, 22611, 17459,  9235,  5155,  8235,
+     U 13380, 21328,  4371,  9284, 21329, 16416,  4352,  5413,
+     V  8208, 11317, 17748, 21314, 12835, 21829, 16464, 19509,
+     W  9492,  4898, 12867,  5412,  8236, 21587, 21316,  9235,
+     X  4690, 20800,  8209,  9761, 12352, 20764, 17408,  5137,  8256,
+     Y 20828, 20480,  5168, 21504,  5137,  8241, 13369, 16465, 21524,
+     Z  5200, 23568,  5396,  9027, 19777, 12320,  4352,  5188,  4160/      
+
+      SAVE
+C
+C      FORM FULL IT MATRIX (TOO MANY CONTINUATIONS FOR ALL TO BE
+C      READ IN AT ONCE).
+C
+      DO 11 K=1,176
+  11  IT(K) = IT1(K)
+      DO 10 L=1,107
+      IT(L+176) = IT2(L)
+  10  CONTINUE
+C
+C       INITIALIZE HEIGHT & ANGLE
+C
+      THETA = ANGLE
+      IF (N .EQ. -1 .AND. ANGLE .EQ. 3600.) THETA = 0.
+      IF (N .LT. (-1)) GO TO 5200
+      LUMP = THETA + SIGN(.5, THETA)
+      NN = .5 + HT * 100.
+      CALL QXDRAW (NN, LUMP, 1)
+C
+C       SETUP POSITION OF FIRST CHAR
+C       DRAW HAS RETURNED CHAR WIDTH
+C       DELTA (X,Y)*100 IN (NN,LUMP)
+C
+      X = XX
+      Y = YY
+      IF (N .GE. 0) GO TO 5160
+C
+C       CALCULATE OFFSET FOR MARKER SYMBOL
+C       SPECIAL PTC5-3 SYMBOLS NOT IMPLEMENTED IN SOFTWARE
+      CS = .001667 * NN
+      SN = .001667 * LUMP
+      X = X - 3. * CS + 3.5 * SN
+      IF (ANGLE .NE. 3600.) Y = Y - 3. * SN - 3.5 * CS
+      IF (ANGLE .EQ. 3600.) Y = Y - 3. * SN - 3.0 * CS
+C
+C       MOVE PEN TO INITIAL POSITION
+C
+ 5160 CALL PLOT (X,Y,3)
+C
+C       UPDATE DRAW WITH CURRENT POSITION
+C
+      NN = 400. * X
+      LUMP = 400. * Y
+      CALL QXDRAW (NN, LUMP, 5)
+C
+C       START PROCESSING STRING
+C
+ 5200 NN = N
+      I = 0
+      IF (NN .GT. 0) GO TO 5250
+      LOOK = IHOL(1)
+      GO TO 5300
+C
+C       UNPACK A WORD FROM IHOL
+C
+ 5250 I = I + 1
+      LOOK = IHOL(I)
+      IF (LOOK .LT. 0) LOOK = LOOK + 256
+ 5300 CONTINUE
+C
+C       PROCESS EACH CHARACTER
+C
+      IFUDGE = 1
+      LOOK = LOOK - 32
+      IF (LOOK .LT. 1 .OR. LOOK .GT. 90 ) GO TO 5680
+      IF (LOOK .GE. 84) THEN
+      IFUDGE = 1
+      ELSE
+      IFUDGE = 0
+      ENDIF
+      K = ID(LOOK)
+      J = (K / 256) - IFUDGE
+      L1 = K - (J * 256)
+      CALL PENUP
+C
+C       DRAW THE CHAR USING STROKE TABLE
+C
+      JJ = (J + 1) / 2
+ 5530 DO 5660 IIII = 1, JJ
+      K = IT(L1)
+      IDIV = 4096
+C
+C       DECODE AND DRAW EACH STROKE
+C
+      DO 5650 LUMP = 1, 2
+      IX = K / IDIV
+      K = K - IDIV * IX
+      IDIV = IDIV / 16
+      IY = K / IDIV
+      K = K - IDIV * IY
+      IDIV = IDIV / 16
+      IF (IX .EQ. 0) GO TO 5650
+ 5630 CALL QXDRAW (IX, IY, 2)
+      J = J - 1
+      IF (J .LE. 0) GO TO 5680
+ 5650 CONTINUE
+ 5660 L1 = L1 + 1
+C
+C       STEP TO NEXT CHARACTER
+C
+ 5680 CALL QXDRAW ( 6, 0, 3)
+C
+C       DECREMENT & TEST # CHAR REMAINING
+C
+      NN = NN - 1
+      IF (NN .LE. 0) RETURN
+      GO TO 5250
+      END
+
+
+      SUBROUTINE WHERE(X,Y,FACT)
+C
+C            THIS SUBROUTINE RETURNS THE CURRENT FLOATING  POINT
+C       COORDINATES OF THE PEN POSITION IN X AND Y.  FACT IS THE
+C       CURRENT PLOTTING FACTOR AS SET BY FACTOR
+C
+      J = 4
+      CALL PLOT (X, Y, J)
+      FACT = FLOAT(J) * .0001
+      RETURN
+      END
+      SUBROUTINE RSTR (IARG)
+C
+C       THIS SUBROUTINE IS USED TO FINISH EACH PLOT AND REPOSTION
+C       THE PEN AND PAPER. THE ARGUMENT DETERMINES THE ACTION:
+C
+C               IARG = 0:       DUMP BUFFER AND RETURN TO TTY MODE
+C               IARG = 1:       INDEX PAPER TO NEXT BLANK PAGE & POSITIO
+C               IARG = 2:       FINAL CALL: INDEX PAPER, POSITION
+C                               PEN AND RETURN TO TTY MODE. FOR THIS
+C                               VERSION, 1 & 2 ARE EQUIVALENT
+C
+C      Modified by DET in Sep 2005 to make g77 happy.
+C       The fifth argument to MOVER must be a byte.
+C
+      BYTE LBL
+
+      CALL PENUP
+      IF (IARG-1)20,10,30
+   10 CALL PLOT (0., 0., 6)
+      RETURN
+  30  CALL PLOT(0.,0.,6)
+  20  LBL = 0
+      CALL MOVER (28000, 0, 0, 0, LBL, 0, 0)
+      CALL IMGCLS
+      RETURN
+      END
+      SUBROUTINE IMGOUT (C, N)
+      BYTE C(N)
+C
+	BYTE WORD(4)
+	CHARACTER*(*) FILENAME
+	LOGICAL OPN
+	DATA OPN /.FALSE./
+
+	SAVE
+C
+	WRITE (77) N, (C(I),I=1,N)
+	RETURN
+C
+C
+	ENTRY FILOPN (FILENAME)
+C
+	IF (OPN) GO TO 5
+	ILEN = LEN(FILENAME)
+	I = INDEX (FILENAME(1:),'.')
+	IF (I .EQ. 0) THEN
+		J = 1
+30		IF (FILENAME(J:J) .EQ. ' ') THEN
+			J = J+1
+			IF (J .GT. ILEN) GO TO 5
+			GO TO 30
+			ENDIF
+		I = INDEX (FILENAME(J:),' ')
+		FILENAME(I:I+3) = '.PLT'
+		ENDIF
+	OPEN (UNIT=77,NAME=FILENAME,FORM='UNFORMATTED',STATUS='NEW')
+	OPN = .TRUE.
+	RETURN
+5	WRITE (*,*) ' Plot file name will be "PLOTFILE.DAT" '
+	RETURN
+C
+C
+	ENTRY IMGOPN
+C
+	IF (OPN) RETURN
+	OPEN (UNIT=77,NAME='PLOTFILE',FORM='UNFORMATTED',STATUS='NEW')
+	OPN = .TRUE.
+	RETURN
+C
+C
+	ENTRY IMGIN(WORD)
+C
+	WORD(1) = ICHAR('3')
+	DO 40 I=2,4
+	WORD(I) = ICHAR(' ')
+40	CONTINUE
+	RETURN
+C
+C
+	ENTRY IMGCLS
+C
+	CLOSE (UNIT=77)
+	RETURN
+	END

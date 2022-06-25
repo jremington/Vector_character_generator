@@ -1,0 +1,798 @@
+
+1 ! ID 4097 IT 1 strokes 4
+moveto 3,7
+drawto 3,2
+moveto 3,1
+drawto 3,0
+
+2 " ID 4099 IT 3 strokes 4
+moveto 2,7
+drawto 2,5
+moveto 4,7
+drawto 4,5
+
+3 # ID 11269 IT 5 strokes 11
+moveto 1,2
+drawto 5,2
+drawto 4,2
+drawto 4,1
+drawto 4,5
+drawto 4,4
+drawto 5,4
+drawto 1,4
+drawto 2,4
+drawto 2,5
+drawto 2,1
+
+4 $ ID 12299 IT 11 strokes 12
+moveto 3,0
+drawto 3,7
+drawto 3,6
+drawto 5,6
+drawto 2,6
+drawto 1,5
+drawto 2,4
+drawto 4,4
+drawto 5,3
+drawto 5,2
+drawto 4,1
+drawto 1,1
+
+5 % ID 11281 IT 17 strokes 11
+moveto 3,0
+drawto 5,0
+drawto 5,2
+drawto 3,2
+drawto 3,0
+moveto 3,7
+drawto 3,5
+drawto 1,5
+drawto 1,7
+drawto 5,7
+drawto 1,0
+
+6 & ID 10264 IT 24 strokes 10
+moveto 5,2
+drawto 3,0
+drawto 2,0
+drawto 1,1
+drawto 1,3
+drawto 4,6
+drawto 3,7
+drawto 2,7
+drawto 2,4
+drawto 5,1
+
+7 ' ID 2077 IT 29 strokes 2
+moveto 3,7
+drawto 3,5
+
+8 ( ID 4126 IT 30 strokes 4
+moveto 4,7
+drawto 3,6
+drawto 3,1
+drawto 4,0
+
+9 ) ID 4128 IT 32 strokes 4
+moveto 2,7
+drawto 3,6
+drawto 3,1
+drawto 2,0
+
+10 * ID 8226 IT 34 strokes 8
+moveto 1,1
+drawto 5,5
+moveto 5,1
+drawto 1,5
+moveto 1,3
+drawto 5,3
+moveto 3,5
+drawto 3,1
+
+11 + ID 4132 IT 36 strokes 4
+moveto 1,3
+drawto 5,3
+moveto 3,5
+drawto 3,1
+
+12 , ID 4134 IT 38 strokes 4
+moveto 2,0
+drawto 4,2
+drawto 3,2
+drawto 3,1
+
+13 - ID 2222 IT 174 strokes 2
+moveto 1,3
+drawto 5,3
+
+14 . ID 5165 IT 45 strokes 5
+moveto 2,0
+drawto 3,1
+drawto 3,0
+drawto 2,1
+drawto 2,0
+
+15 / ID 2070 IT 22 strokes 2
+moveto 5,7
+drawto 1,0
+
+16 0 ID 10289 IT 49 strokes 10
+moveto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,6
+drawto 4,7
+drawto 2,7
+drawto 1,6
+drawto 1,1
+drawto 2,0
+drawto 4,7
+
+17 1 ID 5175 IT 55 strokes 5
+moveto 2,6
+drawto 3,7
+drawto 3,0
+drawto 2,0
+drawto 4,0
+
+18 2 ID 8250 IT 58 strokes 8
+moveto 1,6
+drawto 2,7
+drawto 4,7
+drawto 5,6
+drawto 5,4
+drawto 1,1
+drawto 1,0
+drawto 5,0
+
+19 3 ID 13374 IT 62 strokes 13
+moveto 1,6
+drawto 2,7
+drawto 4,7
+drawto 5,6
+drawto 5,5
+drawto 4,4
+drawto 2,4
+drawto 4,4
+drawto 5,3
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+
+20 4 ID 7239 IT 71 strokes 7
+moveto 1,7
+drawto 1,2
+drawto 5,2
+moveto 4,7
+drawto 4,0
+drawto 3,0
+drawto 5,0
+
+21 5 ID 9291 IT 75 strokes 9
+moveto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,3
+drawto 4,4
+drawto 1,4
+drawto 1,7
+drawto 5,7
+
+22 6 ID 11329 IT 65 strokes 11
+moveto 2,4
+drawto 4,4
+drawto 5,3
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+drawto 1,6
+drawto 2,7
+drawto 4,7
+drawto 5,6
+
+23 7 ID 5200 IT 80 strokes 5
+moveto 1,6
+drawto 1,7
+drawto 5,7
+drawto 5,6
+drawto 2,0
+
+24 8 ID 16467 IT 83 strokes 16
+moveto 2,4
+drawto 1,3
+drawto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,3
+drawto 4,4
+drawto 2,4
+drawto 1,5
+drawto 1,6
+drawto 2,7
+drawto 4,7
+drawto 5,6
+drawto 5,5
+drawto 4,4
+
+25 9 ID 12379 IT 91 strokes 12
+moveto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,6
+drawto 4,7
+drawto 2,7
+drawto 1,6
+drawto 1,4
+drawto 2,3
+drawto 4,3
+drawto 5,4
+
+26 : ID 4193 IT 97 strokes 4
+moveto 3,5
+drawto 3,4
+moveto 3,2
+drawto 3,1
+
+27 ; ID 7206 IT 38 strokes 7
+moveto 2,0
+drawto 4,2
+drawto 3,2
+drawto 3,1
+moveto 3,3
+drawto 4,4
+drawto 3,4
+
+28 < ID 3171 IT 99 strokes 3
+moveto 4,5
+drawto 2,3
+drawto 4,1
+
+29 = ID 4197 IT 101 strokes 4
+moveto 1,5
+drawto 5,5
+moveto 1,2
+drawto 5,2
+
+30 > ID 3175 IT 103 strokes 3
+moveto 2,5
+drawto 4,3
+drawto 2,1
+
+31 ? ID 7273 IT 105 strokes 7
+moveto 1,7
+drawto 3,7
+drawto 4,6
+drawto 2,4
+drawto 2,2
+moveto 2,1
+drawto 2,0
+
+32 @ ID 8301 IT 109 strokes 8
+moveto 4,4
+drawto 2,4
+drawto 2,2
+drawto 4,2
+drawto 4,5
+drawto 1,5
+drawto 1,1
+drawto 4,1
+
+33 A ID 8305 IT 113 strokes 8
+moveto 1,0
+drawto 1,6
+drawto 2,7
+drawto 4,7
+drawto 5,6
+drawto 5,0
+drawto 5,3
+drawto 1,3
+
+34 B ID 11381 IT 117 strokes 11
+moveto 4,4
+drawto 5,3
+drawto 5,1
+drawto 4,0
+drawto 1,0
+drawto 1,7
+drawto 4,7
+drawto 5,6
+drawto 5,5
+drawto 4,4
+drawto 1,4
+
+35 C ID 8315 IT 123 strokes 8
+moveto 5,6
+drawto 4,7
+drawto 2,7
+drawto 1,6
+drawto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+
+36 D ID 7297 IT 129 strokes 7
+moveto 1,0
+drawto 1,7
+drawto 4,7
+drawto 5,6
+drawto 5,1
+drawto 4,0
+drawto 1,0
+
+37 E ID 7301 IT 133 strokes 7
+moveto 5,7
+drawto 1,7
+drawto 1,4
+drawto 4,4
+drawto 1,4
+drawto 1,0
+drawto 5,0
+
+38 F ID 6277 IT 133 strokes 6
+moveto 5,7
+drawto 1,7
+drawto 1,4
+drawto 4,4
+drawto 1,4
+drawto 1,0
+
+39 G ID 11387 IT 123 strokes 11
+moveto 5,6
+drawto 4,7
+drawto 2,7
+drawto 1,6
+drawto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,3
+drawto 6,3
+drawto 4,3
+
+40 H ID 6186 IT 42 strokes 6
+moveto 1,0
+drawto 1,7
+drawto 1,4
+drawto 5,4
+drawto 5,7
+drawto 5,0
+
+41 I ID 6281 IT 137 strokes 6
+moveto 2,0
+drawto 4,0
+drawto 3,0
+drawto 3,7
+drawto 2,7
+drawto 4,7
+
+42 J ID 5260 IT 140 strokes 5
+moveto 5,7
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+
+43 K ID 6287 IT 143 strokes 6
+moveto 4,7
+drawto 1,4
+drawto 5,0
+drawto 1,4
+drawto 1,7
+drawto 1,0
+
+44 L ID 3217 IT 145 strokes 3
+moveto 1,7
+drawto 1,0
+drawto 5,0
+
+45 M ID 5267 IT 147 strokes 5
+moveto 1,0
+drawto 1,7
+drawto 3,3
+drawto 5,7
+drawto 5,0
+
+46 N ID 4246 IT 150 strokes 4
+moveto 1,0
+drawto 1,7
+drawto 5,0
+drawto 5,7
+
+47 O ID 9265 IT 49 strokes 9
+moveto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,6
+drawto 4,7
+drawto 2,7
+drawto 1,6
+drawto 1,1
+drawto 2,0
+
+48 P ID 7287 IT 119 strokes 7
+moveto 1,0
+drawto 1,7
+drawto 4,7
+drawto 5,6
+drawto 5,5
+drawto 4,4
+drawto 1,4
+
+49 Q ID 11312 IT 48 strokes 11
+moveto 4,2
+drawto 5,0
+moveto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,6
+drawto 4,7
+drawto 2,7
+drawto 1,6
+drawto 1,1
+drawto 2,0
+
+50 R ID 8311 IT 119 strokes 8
+moveto 1,0
+drawto 1,7
+drawto 4,7
+drawto 5,6
+drawto 5,5
+drawto 4,4
+drawto 1,4
+drawto 5,0
+
+51 S ID 12372 IT 84 strokes 12
+moveto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,3
+drawto 4,4
+drawto 2,4
+drawto 1,5
+drawto 1,6
+drawto 2,7
+drawto 4,7
+drawto 5,6
+
+52 T ID 4248 IT 152 strokes 4
+moveto 3,0
+drawto 3,7
+drawto 1,7
+drawto 5,7
+
+53 U ID 6284 IT 140 strokes 6
+moveto 5,7
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+drawto 1,7
+
+54 V ID 3226 IT 154 strokes 3
+moveto 1,7
+drawto 3,0
+drawto 5,7
+
+55 W ID 5276 IT 156 strokes 5
+moveto 1,7
+drawto 1,0
+drawto 3,4
+drawto 5,0
+drawto 5,7
+
+56 X ID 4118 IT 22 strokes 4
+moveto 5,7
+drawto 1,0
+moveto 1,7
+drawto 5,0
+
+57 Y ID 5279 IT 159 strokes 5
+moveto 3,0
+drawto 3,5
+drawto 1,7
+drawto 3,5
+drawto 5,7
+
+58 Z ID 4258 IT 162 strokes 4
+moveto 1,7
+drawto 5,7
+drawto 1,0
+drawto 5,0
+
+59 [ ID 4260 IT 164 strokes 4
+moveto 4,7
+drawto 2,7
+drawto 2,0
+drawto 4,0
+
+60 \ ID 2214 IT 166 strokes 2
+moveto 1,7
+drawto 5,0
+
+61 ] ID 4263 IT 167 strokes 4
+moveto 2,7
+drawto 4,7
+drawto 4,0
+drawto 2,0
+
+62 ^ ID 4265 IT 169 strokes 4
+moveto 1,4
+drawto 3,6
+drawto 5,4
+drawto 3,6
+
+63 _ ID 5292 IT 172 strokes 5
+moveto 3,1
+drawto 1,3
+drawto 3,5
+drawto 1,3
+drawto 5,3
+
+64 ` ID 2332 IT 284 strokes 2
+moveto 2,7
+drawto 3,5
+
+65 a ID 9391 IT 175 strokes 9
+moveto 1,3
+drawto 2,4
+drawto 4,4
+drawto 5,3
+drawto 5,0
+drawto 2,0
+drawto 1,1
+drawto 2,2
+drawto 5,2
+
+66 b ID 9396 IT 180 strokes 9
+moveto 1,7
+drawto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+drawto 5,3
+drawto 4,4
+drawto 2,4
+drawto 1,3
+
+67 c ID 8377 IT 185 strokes 8
+moveto 5,3
+drawto 4,4
+drawto 2,4
+drawto 1,3
+drawto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+
+68 d ID 10429 IT 189 strokes 10
+moveto 5,7
+drawto 5,0
+moveto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+drawto 1,3
+drawto 2,4
+drawto 4,4
+drawto 5,3
+
+69 e ID 10434 IT 194 strokes 10
+moveto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+drawto 1,3
+drawto 2,4
+drawto 4,4
+drawto 5,3
+drawto 5,2
+drawto 1,2
+
+70 f ID 7367 IT 199 strokes 7
+moveto 5,6
+drawto 4,7
+drawto 3,7
+drawto 2,6
+drawto 2,0
+moveto 4,4
+drawto 1,4
+
+71 g ID 12491 IT 203 strokes 12
+moveto 5,3
+drawto 4,2
+drawto 2,2
+drawto 1,3
+drawto 1,4
+drawto 2,5
+drawto 4,5
+drawto 5,4
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+
+72 h ID 8401 IT 209 strokes 8
+moveto 1,7
+drawto 2,7
+drawto 2,0
+moveto 2,3
+drawto 3,4
+drawto 4,4
+drawto 5,3
+drawto 5,0
+
+73 i ID 6357 IT 213 strokes 6
+moveto 3,5
+moveto 2,4
+drawto 3,4
+drawto 3,0
+moveto 2,0
+drawto 4,0
+
+74 j ID 6360 IT 216 strokes 6
+moveto 4,5
+moveto 3,4
+drawto 4,4
+drawto 4,1
+drawto 3,0
+drawto 2,1
+
+75 k ID 7387 IT 219 strokes 7
+moveto 1,7
+drawto 2,7
+drawto 2,0
+moveto 2,2
+drawto 4,4
+moveto 2,2
+drawto 5,0
+
+76 l ID 5343 IT 223 strokes 5
+moveto 2,7
+drawto 3,7
+drawto 3,0
+moveto 2,0
+drawto 4,0
+
+77 m ID 10466 IT 226 strokes 10
+moveto 1,4
+drawto 1,0
+moveto 3,3
+drawto 3,0
+moveto 5,0
+drawto 5,3
+drawto 4,4
+drawto 3,3
+drawto 2,4
+drawto 1,3
+
+78 n ID 8423 IT 231 strokes 8
+moveto 1,4
+drawto 2,3
+drawto 2,0
+moveto 2,3
+drawto 3,4
+drawto 4,4
+drawto 5,3
+drawto 5,0
+
+79 o ID 9451 IT 235 strokes 9
+moveto 1,1
+drawto 1,3
+drawto 2,4
+drawto 4,4
+drawto 5,3
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+
+80 p ID 12528 IT 240 strokes 12
+moveto 1,5
+drawto 2,5
+drawto 2,0
+drawto 1,0
+moveto 2,4
+drawto 3,5
+drawto 4,5
+drawto 5,4
+drawto 5,3
+drawto 4,2
+drawto 3,2
+drawto 2,3
+
+81 q ID 12534 IT 246 strokes 12
+moveto 5,5
+drawto 4,5
+drawto 4,0
+drawto 5,0
+moveto 4,4
+drawto 3,5
+drawto 2,5
+drawto 1,4
+drawto 1,3
+drawto 2,2
+drawto 3,2
+drawto 4,3
+
+82 r ID 6396 IT 252 strokes 6
+moveto 1,5
+drawto 2,4
+drawto 2,0
+moveto 2,4
+drawto 5,4
+drawto 5,3
+
+83 s ID 10495 IT 255 strokes 10
+moveto 5,3
+drawto 4,4
+drawto 2,4
+drawto 1,3
+drawto 1,2
+drawto 5,2
+drawto 5,1
+drawto 4,0
+drawto 2,0
+drawto 1,1
+
+84 t ID 7428 IT 260 strokes 7
+moveto 2,6
+drawto 2,1
+drawto 3,0
+drawto 4,0
+drawto 5,1
+moveto 1,4
+drawto 4,4
+
+85 u ID 7432 IT 264 strokes 7
+moveto 1,4
+drawto 1,1
+drawto 2,0
+drawto 4,0
+drawto 5,1
+moveto 5,4
+drawto 5,0
+
+86 v ID 3340 IT 268 strokes 3
+moveto 1,4
+drawto 3,0
+drawto 5,4
+
+87 w ID 9486 IT 270 strokes 9
+moveto 1,4
+drawto 1,1
+drawto 2,0
+drawto 3,1
+drawto 3,4
+moveto 3,1
+drawto 4,0
+drawto 5,1
+drawto 5,4
+
+88 x ID 4371 IT 275 strokes 4
+moveto 1,4
+drawto 5,0
+moveto 5,4
+drawto 1,0
+
+89 y ID 9493 IT 277 strokes 9
+moveto 1,5
+drawto 1,4
+drawto 2,3
+drawto 4,3
+moveto 4,5
+drawto 4,1
+drawto 3,0
+drawto 2,0
+drawto 1,1
+
+90 z ID 4378 IT 282 strokes 4
+moveto 1,4
+drawto 4,4
+drawto 1,0
+drawto 4,0
