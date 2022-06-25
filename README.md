@@ -9,7 +9,7 @@ Characters are defined on an 8x8 (X, Y) matrix as lines or strokes between endpo
 
 Some guides for Calcomp vector routines can be found here: http://www.urbanjost.altervista.org/LIBRARY/libcalcomp/index.html
 
-Examples of pen-plotted Calcomp characters are shown in the images below:
+Examples of pen-plotted Calcomp characters and symbols are shown in the images below:
 
 ![c_qa1](https://user-images.githubusercontent.com/5509037/175750542-a4abc832-2eb5-47d3-bb6a-b44a1b694785.gif)
 
@@ -23,4 +23,4 @@ I included the original Fortran77 code (plotsub.f), which is in the public domai
 
 3. calcomp6.ino is the above refactored code, but with general purpose text output (moveto/drawto commands) for the graphics, to be used as input to other devices.
 
-The file Calcomp_ID_IT.txt is a complete list of all the characters encoded by calcomp5.ino and calcomp6.ino, including the individual move/draw vector outputs representing each character.
+The file Calcomp_ID_IT.txt is a complete list of all the characters and symbols encoded by calcomp5.ino and calcomp6.ino, including the individual move/draw vector outputs representing each character.
