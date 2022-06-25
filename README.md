@@ -5,7 +5,7 @@ I've uploaded C/C++ code to generate ASCII characters for vector drawing devices
 
 The advantage of a vector-based character generator is that, unlike with bitmap character generators, the output is infinitely scaleable and can be rotated and plotted in arbitrary orientations or with arbitrary distortions. Useful to drive engravers (laser or wood), etc.
 
-Characters are defined on an 8x8 (X, Y) matrix as lines or strokes between endpoints, and were originally optimized for simple move/draw pen plotters.
+Characters are defined on an 8x8 (X, Y) matrix as lines or strokes between endpoints, and were originally optimized for efficiency and plotting speed, for hard copy production using simple move/draw pen plotters.
 
 Examples of pen-plotted Calcomp characters are shown in the images below:
 
