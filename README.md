@@ -23,3 +23,4 @@ I included the original Fortran77 code (plotsub.f), which is in the public domai
 
 3. calcomp6.ino is the above refactored code, but with general purpose text output (moveto/drawto commands) for the graphics, to be used as input to other devices.
 
+The file Calcomp_ID_IT.txt is a complete list of all the characters encoded by calcomp5.ino and calcomp6.ino, including the individual move/draw vector outputs representing each character.
