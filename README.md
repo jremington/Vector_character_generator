@@ -25,4 +25,4 @@ I included the original Fortran77 code (plotsub.f), which is in the public domai
 
 The file Calcomp_ID_IT.txt is a complete list of all the characters and symbols encoded by calcomp5.ino and calcomp6.ino, including the individual move/draw vector outputs representing each character.
 
-**NOTE:** due program design, the **X == 0** has special significance and that column cannot be used to form part of the character.
+**NOTE:** due to program design, **X == 0** has special significance and cannot be used to form part of the character.
