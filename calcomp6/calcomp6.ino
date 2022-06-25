@@ -153,15 +153,14 @@ void setup() {
     J = (K >> 10);
     L1 = K - (J << 10); //stroke table index
 
-    // draw char using stroke table, start with move (pen up)
-    penup = 1;
-
     Serial.print(" IT ");  
     Serial.print(L1); //table index
     Serial.print(" strokes ");
     Serial.println(J);
     
-   // unpack move/draw commands. Always start char with move!
+    // unpack move/draw commands. Always start char with move!
+    // draw char using stroke table, start with pen up
+    penup = 1;
 
     int JJ = (J + 1) / 2;  //round up and calculate number of stroke table words
     for (int w = 0; w < JJ; w++) {
