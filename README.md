@@ -3,7 +3,7 @@ Vector based character generator based on 1980s Calcomp pen plotter Fortran code
 
 I've uploaded C/C++ code to generate ASCII characters for vector drawing devices, translated from the Fortran77 code for Calcomp pen plotters.
 
-The main advantage of a vector-based character generator is that, unlike with bitmap character generators, the output is infinitely scaleable and can be rotated and plotted in arbitrary orientations and/or with arbitrary distortions with **no aliasing**. This is very useful to drive plotters, engravers (laser or wood), laser light shows, etc.
+The main advantage of a vector-based character generator is that, unlike with bitmap character generators, the output is infinitely scaleable and can be drawn in arbitrary orientations and/or distortions with **no aliasing**. This is very useful to drive plotters, engravers (laser or wood), laser light shows, etc.
 
 Characters are defined on an 8x8 (X, Y) matrix as lines (strokes) between endpoints, and were originally optimized for efficiency and plotting speed, for production of hard copy using simple move/draw pen plotters. 
 
