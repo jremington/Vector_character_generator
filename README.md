@@ -7,7 +7,7 @@ The main advantage of a vector-based character generator is that, unlike with bi
 
 Characters are defined on an 8x8 (X, Y) matrix as lines (strokes) between endpoints, and were originally optimized for efficiency and plotting speed, for production of hard copy using simple move/draw pen plotters. 
 
-**NOTE:** due to program design, vector endpoints with **X = 0** have special significance and cannot be used to form part of the character, so that column should be considered as part of character to character spacing.  It would be easy to do away with that restriction, if necessary (e.g. a "skip" command could be X>7, as done for Y>7, pen up move).
+**NOTE:** due to tje program design, vector endpoints with **X = 0** have special significance (a "skip" command) and cannot be used to form part of the character, so that column should be considered as part of character to character spacing.  It is trivial to do away with that restriction, if desired (e.g. X=0 could be coded as X=8, as done for Y>7, pen up move).
 
 Some user guides to the Calcomp vector drawing routines can be found here: http://www.urbanjost.altervista.org/LIBRARY/libcalcomp/index.html
 
