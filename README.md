@@ -11,7 +11,7 @@ Characters are defined on an 8x8 (X, Y) matrix as lines (strokes) between endpoi
 
 Some user guides to the Calcomp vector drawing routines can be found here: http://www.urbanjost.altervista.org/LIBRARY/libcalcomp/index.html
 
-Examples of pen-plotted Calcomp characters and symbols are shown in the images below:
+Examples of pen-plotted Calcomp characters and symbols are shown in the images below (from above link).
 
 ![c_qa1](https://user-images.githubusercontent.com/5509037/175750542-a4abc832-2eb5-47d3-bb6a-b44a1b694785.gif)
 
