@@ -1,5 +1,6 @@
-// Translation from CalComp vector character plotter Fortran
-// plotsub.f in TNT package
+// Translation of CalComp Fortran vector character generator
+// file plotsub.f in TNT package
+
 // refactored ID table to eliminate indexing kludge (sjr)
 // fixed more characters, IT table in HEX, to see coordinates
 // no display output, text move/draw output
