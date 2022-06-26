@@ -130,28 +130,25 @@ const uint16_t IT[] PROGMEM = {  //284 entries, counting from 1
 #define SCREEN_ADDRESS 0x3D ///0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
+// function qxdraw interprets the character vectors, scales and outputs 
+// them one by one to a bitmapped graphics display for inspection
+
 void qxdraw(int ix, int iy, char penup) {
   static char up = 1, oldx = 0, oldy = 0;
   if (iy > 7 or penup == 1) {
-    //   Serial.println(" pen up");
-
     if (iy > 7) iy = iy - 8;
-    up = 1;
-    oldx = 5 + 5 * ix; //vector start
+    up = 1; //pen up move
+    oldx = 5 + 5 * ix; //scale and shift next vector start
     oldy = 60 - 5 * iy;
   }
-  ix = 5 + 5 * ix; //vector end
+  ix = 5 + 5 * ix; //scale and shift vector end
   iy = 60 - 5 * iy;
-  //  Serial.print("moveto "); Serial.print(ix); Serial.print(","); Serial.println(iy);
+ 
   if (up == 0) display.drawLine(oldx, oldy, ix, iy, SSD1306_WHITE);  // pen down draw
-  else {
-    display.drawLine(oldx, oldy, ix, iy, SSD1306_BLACK); //pen up move
-    //    Serial.println(" pen down");  //revert pen
-    up = 0;
-  }
+  up = 0;
   oldx = ix; // next vector start
   oldy = iy;
-  display.display();
+  display.display();  //show it on the screen
 }
 
 void setup() {
