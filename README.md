@@ -22,7 +22,7 @@ Examples of pen-plotted Calcomp characters and symbols are shown in the images b
 
 I included the original Fortran77 code (plotsub.f), which is in the public domain, and three C/C++ translations for Arduino.
 
-1. calcomp4.ino is a C/C++ translation of the character generator SYMB1 found in plotsub.f, which features lower case letters extensions not found in the original Calcomp routines.
+1. calcomp4.ino is a C/C++ translation of the character generator SYMB1 found in plotsub.f, which features lower case letters (not available in the original Calcomp routines).
 
 2. calcomp5.ino is a refactored Arduino translation of the same code, featuring graphic display of single characters on an Adafruit SSD1306 128x64 bitmapped display. Some minor symbol and data table errors in the plotsub.f code were corrected in the process.
 
