@@ -1,5 +1,5 @@
-// Translation from CalComp vector character plotter Fortran
-// plotsub.f in TNT package
+// Translation of CalComp Fortran vector character generator
+// file plotsub.f in TNT package
 
 // original indexing, output on SSD1306 display
 // some errors in character table not corrected.
