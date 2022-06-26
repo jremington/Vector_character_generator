@@ -9,7 +9,7 @@ Characters are defined on an 8x8 (X, Y) matrix as lines (strokes) between endpoi
 
 **NOTE:** due to program design, vector endpoints with **X = 0** have special significance and cannot be used to form part of the character, so that column should be considered as part of character to character spacing.  It would be easy to do away with that restriction, if necessary (e.g. a "skip" command could be X>7, as done for Y>7, pen up move).
 
-Some guides for Calcomp vector routines can be found here: http://www.urbanjost.altervista.org/LIBRARY/libcalcomp/index.html
+Some user guides to the Calcomp vector drawing routines can be found here: http://www.urbanjost.altervista.org/LIBRARY/libcalcomp/index.html
 
 Examples of pen-plotted Calcomp characters and symbols are shown in the images below:
 
