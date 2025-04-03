@@ -28,7 +28,7 @@ I included the original Fortran77 code (plotsub.f), which is in the public domai
 
 3. calcomp6.ino is the above refactored code, but with general purpose text output (moveto/drawto commands) for the graphics, to be used as input to other devices.  
 
-The coordinate output from this code consists of the individual moves required for form the character on an 8x8 matrix. It is "proof of principle" and to be useful for plotting text or engraving, the output has to be scaled and origin shifted, and possibly rotated to fit individual requirements. Some study of the Calcomp documentation and the Fortran code in plotsub.f (particularly the subroutines NUMBER and SYMBOL) should make it clear how to proceed. In many cases, rotation/scaling/shifting transformation code can be directly lifted from the Fortran and with very minor changes, incorporated into a C/C++ package.
+The coordinate output from this code consists of the individual moves required to form the character on an 8x8 matrix. It is "proof of principle" and to be useful for plotting text or engraving, the output has to be scaled and origin shifted, and possibly rotated to fit individual requirements. Some study of the Calcomp documentation and the Fortran code in plotsub.f (particularly the subroutines NUMBER and SYMBOL) should make it clear how to proceed. In many cases, rotation/scaling/shifting transformation code can be directly lifted from the Fortran and with very minor changes, incorporated into a C/C++ package.
 
 
 The file Calcomp_ID_IT.txt is a complete list of all the characters and symbols encoded by calcomp5.ino and calcomp6.ino, including the individual move/draw vector outputs representing each character.
